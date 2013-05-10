@@ -103,6 +103,18 @@ extern PyTypeObject Pystd__vector__lt__float__gt___Type;
 extern PyTypeObject Pystd__vector__lt__float__gt__Iter_Type;
 
 int _wrap_convert_py2c__std__vector__lt___float___gt__(PyObject *arg, std::vector<float> *container);
+/* --- forward declarations --- */
+
+
+typedef struct {
+    PyObject_HEAD
+    sofia_ml::SofiaConfig *obj;
+    PyBindGenWrapperFlags flags:8;
+} PySofia_mlSofiaConfig;
+
+
+extern PyTypeObject PySofia_mlSofiaConfig_Type;
+
 
 int _wrap_convert_py2c__float(PyObject *value, float *address);
 
@@ -160,13 +172,13 @@ _wrap_sofia_sofia_ml_SvmObjective(PyObject * PYBINDGEN_UNUSED(dummy), PyObject *
     float retval;
     PySfDataSet *test_data;
     PySfWeightVector *w;
-    float lambda;
-    const char *keywords[] = {"test_data", "w", "lambda", NULL};
+    PySofia_mlSofiaConfig *config;
+    const char *keywords[] = {"test_data", "w", "config", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "O!O!f", (char **) keywords, &PySfDataSet_Type, &test_data, &PySfWeightVector_Type, &w, &lambda)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "O!O!O!", (char **) keywords, &PySfDataSet_Type, &test_data, &PySfWeightVector_Type, &w, &PySofia_mlSofiaConfig_Type, &config)) {
         return NULL;
     }
-    retval = sofia_ml::SvmObjective(*((PySfDataSet *) test_data)->obj, *((PySfWeightVector *) w)->obj, lambda);
+    retval = sofia_ml::SvmObjective(*((PySfDataSet *) test_data)->obj, *((PySfWeightVector *) w)->obj, *((PySofia_mlSofiaConfig *) config)->obj);
     py_retval = Py_BuildValue((char *) "f", retval);
     return py_retval;
 }
@@ -178,6 +190,382 @@ static PyMethodDef sofia_sofia_ml_functions[] = {
     {(char *) "SvmObjective", (PyCFunction) _wrap_sofia_sofia_ml_SvmObjective, METH_KEYWORDS|METH_VARARGS, NULL },
     {NULL, NULL, 0, NULL}
 };
+/* --- classes --- */
+
+
+static PyObject* _wrap_PySofia_mlSofiaConfig__get_iterations(PySofia_mlSofiaConfig *self, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "N", PyLong_FromUnsignedLong(self->obj->iterations));
+    return py_retval;
+}
+static int _wrap_PySofia_mlSofiaConfig__set_iterations(PySofia_mlSofiaConfig *self, PyObject *value, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "(O)", value);
+    if (!PyArg_ParseTuple(py_retval, (char *) "I", &self->obj->iterations)) {
+        Py_DECREF(py_retval);
+        return -1;
+    }
+    Py_DECREF(py_retval);
+    return 0;
+}
+static PyObject* _wrap_PySofia_mlSofiaConfig__get_dimensionality(PySofia_mlSofiaConfig *self, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "N", PyLong_FromUnsignedLong(self->obj->dimensionality));
+    return py_retval;
+}
+static int _wrap_PySofia_mlSofiaConfig__set_dimensionality(PySofia_mlSofiaConfig *self, PyObject *value, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "(O)", value);
+    if (!PyArg_ParseTuple(py_retval, (char *) "I", &self->obj->dimensionality)) {
+        Py_DECREF(py_retval);
+        return -1;
+    }
+    Py_DECREF(py_retval);
+    return 0;
+}
+static PyObject* _wrap_PySofia_mlSofiaConfig__get_lambda_param(PySofia_mlSofiaConfig *self, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "f", self->obj->lambda_param);
+    return py_retval;
+}
+static int _wrap_PySofia_mlSofiaConfig__set_lambda_param(PySofia_mlSofiaConfig *self, PyObject *value, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "(O)", value);
+    if (!PyArg_ParseTuple(py_retval, (char *) "f", &self->obj->lambda_param)) {
+        Py_DECREF(py_retval);
+        return -1;
+    }
+    Py_DECREF(py_retval);
+    return 0;
+}
+static PyObject* _wrap_PySofia_mlSofiaConfig__get_learner_type(PySofia_mlSofiaConfig *self, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "i", self->obj->learner_type);
+    return py_retval;
+}
+static int _wrap_PySofia_mlSofiaConfig__set_learner_type(PySofia_mlSofiaConfig *self, PyObject *value, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "(O)", value);
+    if (!PyArg_ParseTuple(py_retval, (char *) "i", &self->obj->learner_type)) {
+        Py_DECREF(py_retval);
+        return -1;
+    }
+    Py_DECREF(py_retval);
+    return 0;
+}
+static PyObject* _wrap_PySofia_mlSofiaConfig__get_eta_type(PySofia_mlSofiaConfig *self, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "i", self->obj->eta_type);
+    return py_retval;
+}
+static int _wrap_PySofia_mlSofiaConfig__set_eta_type(PySofia_mlSofiaConfig *self, PyObject *value, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "(O)", value);
+    if (!PyArg_ParseTuple(py_retval, (char *) "i", &self->obj->eta_type)) {
+        Py_DECREF(py_retval);
+        return -1;
+    }
+    Py_DECREF(py_retval);
+    return 0;
+}
+static PyObject* _wrap_PySofia_mlSofiaConfig__get_loop_type(PySofia_mlSofiaConfig *self, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "i", self->obj->loop_type);
+    return py_retval;
+}
+static int _wrap_PySofia_mlSofiaConfig__set_loop_type(PySofia_mlSofiaConfig *self, PyObject *value, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "(O)", value);
+    if (!PyArg_ParseTuple(py_retval, (char *) "i", &self->obj->loop_type)) {
+        Py_DECREF(py_retval);
+        return -1;
+    }
+    Py_DECREF(py_retval);
+    return 0;
+}
+static PyObject* _wrap_PySofia_mlSofiaConfig__get_prediction_type(PySofia_mlSofiaConfig *self, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "i", self->obj->prediction_type);
+    return py_retval;
+}
+static int _wrap_PySofia_mlSofiaConfig__set_prediction_type(PySofia_mlSofiaConfig *self, PyObject *value, void * PYBINDGEN_UNUSED(closure))
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "(O)", value);
+    if (!PyArg_ParseTuple(py_retval, (char *) "i", &self->obj->prediction_type)) {
+        Py_DECREF(py_retval);
+        return -1;
+    }
+    Py_DECREF(py_retval);
+    return 0;
+}
+static PyGetSetDef PySofia_mlSofiaConfig__getsets[] = {
+    {
+        (char*) "dimensionality", /* attribute name */
+        (getter) _wrap_PySofia_mlSofiaConfig__get_dimensionality, /* C function to get the attribute */
+        (setter) _wrap_PySofia_mlSofiaConfig__set_dimensionality, /* C function to set the attribute */
+        NULL, /* optional doc string */
+        NULL /* optional additional data for getter and setter */
+    },
+    {
+        (char*) "prediction_type", /* attribute name */
+        (getter) _wrap_PySofia_mlSofiaConfig__get_prediction_type, /* C function to get the attribute */
+        (setter) _wrap_PySofia_mlSofiaConfig__set_prediction_type, /* C function to set the attribute */
+        NULL, /* optional doc string */
+        NULL /* optional additional data for getter and setter */
+    },
+    {
+        (char*) "loop_type", /* attribute name */
+        (getter) _wrap_PySofia_mlSofiaConfig__get_loop_type, /* C function to get the attribute */
+        (setter) _wrap_PySofia_mlSofiaConfig__set_loop_type, /* C function to set the attribute */
+        NULL, /* optional doc string */
+        NULL /* optional additional data for getter and setter */
+    },
+    {
+        (char*) "learner_type", /* attribute name */
+        (getter) _wrap_PySofia_mlSofiaConfig__get_learner_type, /* C function to get the attribute */
+        (setter) _wrap_PySofia_mlSofiaConfig__set_learner_type, /* C function to set the attribute */
+        NULL, /* optional doc string */
+        NULL /* optional additional data for getter and setter */
+    },
+    {
+        (char*) "lambda_param", /* attribute name */
+        (getter) _wrap_PySofia_mlSofiaConfig__get_lambda_param, /* C function to get the attribute */
+        (setter) _wrap_PySofia_mlSofiaConfig__set_lambda_param, /* C function to set the attribute */
+        NULL, /* optional doc string */
+        NULL /* optional additional data for getter and setter */
+    },
+    {
+        (char*) "iterations", /* attribute name */
+        (getter) _wrap_PySofia_mlSofiaConfig__get_iterations, /* C function to get the attribute */
+        (setter) _wrap_PySofia_mlSofiaConfig__set_iterations, /* C function to set the attribute */
+        NULL, /* optional doc string */
+        NULL /* optional additional data for getter and setter */
+    },
+    {
+        (char*) "eta_type", /* attribute name */
+        (getter) _wrap_PySofia_mlSofiaConfig__get_eta_type, /* C function to get the attribute */
+        (setter) _wrap_PySofia_mlSofiaConfig__set_eta_type, /* C function to set the attribute */
+        NULL, /* optional doc string */
+        NULL /* optional additional data for getter and setter */
+    },
+    { NULL, NULL, NULL, NULL, NULL }
+};
+
+
+static int
+_wrap_PySofia_mlSofiaConfig__tp_init__0(PySofia_mlSofiaConfig *self, PyObject *args, PyObject *kwargs, PyObject **return_exception)
+{
+    const char *keywords[] = {NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "", (char **) keywords)) {
+        {
+            PyObject *exc_type, *traceback;
+            PyErr_Fetch(&exc_type, return_exception, &traceback);
+            Py_XDECREF(exc_type);
+            Py_XDECREF(traceback);
+        }
+        return -1;
+    }
+    self->obj = new sofia_ml::SofiaConfig();
+    self->flags = PYBINDGEN_WRAPPER_FLAG_NONE;
+    return 0;
+}
+
+static int
+_wrap_PySofia_mlSofiaConfig__tp_init__1(PySofia_mlSofiaConfig *self, PyObject *args, PyObject *kwargs, PyObject **return_exception)
+{
+    PySofia_mlSofiaConfig *ctor_arg;
+    const char *keywords[] = {"ctor_arg", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "O!", (char **) keywords, &PySofia_mlSofiaConfig_Type, &ctor_arg)) {
+        {
+            PyObject *exc_type, *traceback;
+            PyErr_Fetch(&exc_type, return_exception, &traceback);
+            Py_XDECREF(exc_type);
+            Py_XDECREF(traceback);
+        }
+        return -1;
+    }
+    self->obj = new sofia_ml::SofiaConfig(*((PySofia_mlSofiaConfig *) ctor_arg)->obj);
+    self->flags = PYBINDGEN_WRAPPER_FLAG_NONE;
+    return 0;
+}
+
+int _wrap_PySofia_mlSofiaConfig__tp_init(PySofia_mlSofiaConfig *self, PyObject *args, PyObject *kwargs)
+{
+    int retval;
+    PyObject *error_list;
+    PyObject *exceptions[2] = {0,};
+    retval = _wrap_PySofia_mlSofiaConfig__tp_init__0(self, args, kwargs, &exceptions[0]);
+    if (!exceptions[0]) {
+        return retval;
+    }
+    retval = _wrap_PySofia_mlSofiaConfig__tp_init__1(self, args, kwargs, &exceptions[1]);
+    if (!exceptions[1]) {
+        Py_DECREF(exceptions[0]);
+        return retval;
+    }
+    error_list = PyList_New(2);
+    PyList_SET_ITEM(error_list, 0, PyObject_Str(exceptions[0]));
+    Py_DECREF(exceptions[0]);
+    PyList_SET_ITEM(error_list, 1, PyObject_Str(exceptions[1]));
+    Py_DECREF(exceptions[1]);
+    PyErr_SetObject(PyExc_TypeError, error_list);
+    Py_DECREF(error_list);
+    return -1;
+}
+
+
+static PyObject*
+_wrap_PySofia_mlSofiaConfig__copy__(PySofia_mlSofiaConfig *self)
+{
+
+    PySofia_mlSofiaConfig *py_copy;
+    py_copy = PyObject_New(PySofia_mlSofiaConfig, &PySofia_mlSofiaConfig_Type);
+    py_copy->obj = new sofia_ml::SofiaConfig(*self->obj);
+    py_copy->flags = PYBINDGEN_WRAPPER_FLAG_NONE;
+    return (PyObject*) py_copy;
+}
+
+static PyMethodDef PySofia_mlSofiaConfig_methods[] = {
+    {(char *) "__copy__", (PyCFunction) _wrap_PySofia_mlSofiaConfig__copy__, METH_NOARGS, NULL},
+    {NULL, NULL, 0, NULL}
+};
+
+static void
+_wrap_PySofia_mlSofiaConfig__tp_dealloc(PySofia_mlSofiaConfig *self)
+{
+        sofia_ml::SofiaConfig *tmp = self->obj;
+        self->obj = NULL;
+        if (!(self->flags&PYBINDGEN_WRAPPER_FLAG_OBJECT_NOT_OWNED)) {
+            delete tmp;
+        }
+    self->ob_type->tp_free((PyObject*)self);
+}
+
+static PyObject*
+_wrap_PySofia_mlSofiaConfig__tp_richcompare (PySofia_mlSofiaConfig *PYBINDGEN_UNUSED(self), PySofia_mlSofiaConfig *other, int opid)
+{
+
+    if (!PyObject_IsInstance((PyObject*) other, (PyObject*) &PySofia_mlSofiaConfig_Type)) {
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    }
+    switch (opid)
+    {
+    case Py_LT:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    case Py_LE:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    case Py_EQ:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    case Py_NE:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    case Py_GE:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    case Py_GT:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    } /* closes switch (opid) */
+    Py_INCREF(Py_NotImplemented);
+    return Py_NotImplemented;
+}
+
+PyTypeObject PySofia_mlSofiaConfig_Type = {
+    PyObject_HEAD_INIT(NULL)
+    0,                                 /* ob_size */
+    (char *) "sofia.sofia_ml.SofiaConfig",            /* tp_name */
+    sizeof(PySofia_mlSofiaConfig),                  /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)_wrap_PySofia_mlSofiaConfig__tp_dealloc,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)NULL,       /* tp_getattr */
+    (setattrfunc)NULL,       /* tp_setattr */
+    (cmpfunc)NULL,           /* tp_compare */
+    (reprfunc)NULL,             /* tp_repr */
+    (PyNumberMethods*)NULL,     /* tp_as_number */
+    (PySequenceMethods*)NULL, /* tp_as_sequence */
+    (PyMappingMethods*)NULL,   /* tp_as_mapping */
+    (hashfunc)NULL,             /* tp_hash */
+    (ternaryfunc)NULL,          /* tp_call */
+    (reprfunc)NULL,              /* tp_str */
+    (getattrofunc)NULL,     /* tp_getattro */
+    (setattrofunc)NULL,     /* tp_setattro */
+    (PyBufferProcs*)NULL,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)NULL,     /* tp_traverse */
+    (inquiry)NULL,             /* tp_clear */
+    (richcmpfunc)_wrap_PySofia_mlSofiaConfig__tp_richcompare,   /* tp_richcompare */
+    0,             /* tp_weaklistoffset */
+    (getiterfunc)NULL,          /* tp_iter */
+    (iternextfunc)NULL,     /* tp_iternext */
+    (struct PyMethodDef*)PySofia_mlSofiaConfig_methods, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    PySofia_mlSofiaConfig__getsets,                     /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)NULL,    /* tp_descr_get */
+    (descrsetfunc)NULL,    /* tp_descr_set */
+    0,                 /* tp_dictoffset */
+    (initproc)_wrap_PySofia_mlSofiaConfig__tp_init,             /* tp_init */
+    (allocfunc)PyType_GenericAlloc,           /* tp_alloc */
+    (newfunc)PyType_GenericNew,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)NULL,             /* tp_is_gc */
+    NULL,                              /* tp_bases */
+    NULL,                              /* tp_mro */
+    NULL,                              /* tp_cache */
+    NULL,                              /* tp_subclasses */
+    NULL,                              /* tp_weaklist */
+    (destructor) NULL                  /* tp_del */
+};
+
+
+/* --- enumerations --- */
+
+
+
+
+
+
+
+
+
 
 static PyObject *
 initsofia_sofia_ml(void)
@@ -187,6 +575,24 @@ initsofia_sofia_ml(void)
     if (m == NULL) {
         return NULL;
     }
+    /* Register the 'sofia_ml::SofiaConfig' class */
+    if (PyType_Ready(&PySofia_mlSofiaConfig_Type)) {
+        return NULL;
+    }
+    PyModule_AddObject(m, (char *) "SofiaConfig", (PyObject *) &PySofia_mlSofiaConfig_Type);
+    PyModule_AddIntConstant(m, (char *) "PEGASOS", sofia_ml::PEGASOS);
+    PyModule_AddIntConstant(m, (char *) "LOGREG_PEGASOS", sofia_ml::LOGREG_PEGASOS);
+    PyModule_AddIntConstant(m, (char *) "LOGREG", sofia_ml::LOGREG);
+    PyModule_AddIntConstant(m, (char *) "LMS_REGRESSION", sofia_ml::LMS_REGRESSION);
+    PyModule_AddIntConstant(m, (char *) "SGD_SVM", sofia_ml::SGD_SVM);
+    PyModule_AddIntConstant(m, (char *) "ROMMA", sofia_ml::ROMMA);
+    PyModule_AddIntConstant(m, (char *) "BASIC_ETA", sofia_ml::BASIC_ETA);
+    PyModule_AddIntConstant(m, (char *) "PEGASOS_ETA", sofia_ml::PEGASOS_ETA);
+    PyModule_AddIntConstant(m, (char *) "CONSTANT", sofia_ml::CONSTANT);
+    PyModule_AddIntConstant(m, (char *) "STOCHASTIC", sofia_ml::STOCHASTIC);
+    PyModule_AddIntConstant(m, (char *) "BALANCED_STOCHASTIC", sofia_ml::BALANCED_STOCHASTIC);
+    PyModule_AddIntConstant(m, (char *) "LINEAR", sofia_ml::LINEAR);
+    PyModule_AddIntConstant(m, (char *) "LOGISTIC", sofia_ml::LOGISTIC);
     return m;
 }
 /* --- module functions --- */
@@ -267,14 +673,14 @@ _wrap_sofia_TrainModel(PyObject * PYBINDGEN_UNUSED(dummy), PyObject *args, PyObj
     PyObject *py_retval;
     SfWeightVector *retval;
     PySfDataSet *training_data;
-    float lambda;
-    const char *keywords[] = {"training_data", "lambda", NULL};
+    PySofia_mlSofiaConfig *config;
+    const char *keywords[] = {"training_data", "config", NULL};
     PySfWeightVector *py_SfWeightVector;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "O!f", (char **) keywords, &PySfDataSet_Type, &training_data, &lambda)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "O!O!", (char **) keywords, &PySfDataSet_Type, &training_data, &PySofia_mlSofiaConfig_Type, &config)) {
         return NULL;
     }
-    retval = TrainModel(*((PySfDataSet *) training_data)->obj, lambda);
+    retval = TrainModel(*((PySfDataSet *) training_data)->obj, *((PySofia_mlSofiaConfig *) config)->obj);
     if (!(retval)) {
         Py_INCREF(Py_None);
         return Py_None;

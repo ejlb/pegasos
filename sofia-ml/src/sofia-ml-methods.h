@@ -48,8 +48,6 @@ namespace sofia_ml {
   // We currently support the following learners.
   enum LearnerType {
     PEGASOS,  // Pegasos SVM, using lambda as regularization parameter
-    MARGIN_PERCEPTRON,  // Perceptron with Margins, where margin size is determined by parameter c
-    PASSIVE_AGGRESSIVE,  // Passive Aggressive Perceptron, where c controls the maximum step size.
     LOGREG_PEGASOS,  // Logistic Regression using Pegasos projection, and lambda as regularization parameter.
     LOGREG,  // Logistic Regression using lambda as regularization parameter.
     LMS_REGRESSION, // Least-mean-squares Regression (using Pegasos projection), and lambda
@@ -64,6 +62,28 @@ namespace sofia_ml {
     PEGASOS_ETA,  // On step i, eta = 1.0 / (lambda * i) 
     CONSTANT  // Use constant eta = 0.02 for all steps.
   };
+
+  enum LoopType {
+      STOCHASTIC,
+      BALANCED_STOCHASTIC,
+  };
+
+  enum PredictionType {
+      LINEAR,
+      LOGISTIC,
+  };
+
+  struct SofiaConfig {
+      unsigned int iterations;
+      unsigned int dimensionality;
+      float lambda_param;
+      EtaType eta_type;
+      LearnerType learner_type;
+      LoopType loop_type;
+      PredictionType prediction_type;
+
+      SofiaConfig();
+   };
 
   // Trains a model w over training_set, using learner_type and eta_type learner with
   // given parameters.  For each iteration, samples one example uniformly at random from
@@ -91,61 +111,6 @@ namespace sofia_ml {
                                    int num_iters,
                                    SfWeightVector* w);
 
-  // Trains a model w over training_set, using learner_type and eta_type learner with
-  // given parameters.  For each iteration, samples one positive example uniformly at
-  // random from the set of all positives, and samples one negative example uniformly
-  // at random from the set of all negatives.  We then take a rank step of the difference
-  // of these two vectors.  This optimizes area under the ROC curve.
-  void StochasticRocLoop(const SfDataSet& training_set,
-			 LearnerType learner_type,
-			 EtaType eta_type,
-			 float lambda,
-			 float c,
-			 int num_iters,
-			 SfWeightVector* w);
-
-  void StochasticClassificationAndRocLoop(const SfDataSet& training_set,
-					   LearnerType learner_type,
-					   EtaType eta_type,
-					   float lambda,
-					   float c,
-					   float rank_step_probability,
-					   int num_iters,
-					   SfWeightVector* w);
-
-  void StochasticClassificationAndRankLoop(const SfDataSet& training_set,
-					   LearnerType learner_type,
-					   EtaType eta_type,
-					   float lambda,
-					   float c,
-					   float rank_step_probability,
-					   int num_iters,
-					   SfWeightVector* w);
-
-  // Trains a model w over training_set, using learner_type and eta_type learner with
-  // given parameters.  Trains a model using the RankSVM objective function, using
-  // indexed-based sampling to sample from the set of all possible canidate pairs
-  // (pairs of examples in the same query but with different rank), training on
-  // the difference of the two vectors in the pair.
-  void StochasticRankLoop(const SfDataSet& training_set,
-			  LearnerType learner_type,
-			  EtaType eta_type,
-			  float lambda,
-			  float c,
-			  int num_iters,
-			  SfWeightVector* w);
-
-  // Optimize RankSVM objective function, but weight each query-id equally (even if some queries
-  // have very few or very many examples).  Currently this is implemented using rejection-sampling,
-  // which is slower than indexed-based sampling.
-  void StochasticQueryNormRankLoop(const SfDataSet& training_set,
-				   LearnerType learner_type,
-				   EtaType eta_type,
-				   float lambda,
-				   float c,
-				   int num_iters,
-				   SfWeightVector* w);
-
   //------------------------------------------------------------------------------//
   //                    Methods for Applying a Model on Data                      //
   //------------------------------------------------------------------------------//
@@ -168,7 +133,7 @@ namespace sofia_ml {
   // model w and a value of the regularization parameter lambda.
   float SvmObjective(const SfDataSet& data_set,
 		     const SfWeightVector& w,
-		     float lambda);
+		     SofiaConfig &sofia);
 
   //--------------------------------------------------------------
   //          Single Stochastic Step Strategy Methods
@@ -182,16 +147,6 @@ namespace sofia_ml {
 		      float c,
 		      float lambda,
 		      SfWeightVector* w);
-
-  // Takes one rank (a-b) step using the LearnerType defined by method, and returns true
-  // iff the method took a gradient step (mod.
-  bool OneLearnerRankStep(LearnerType method,
-			  const SfSparseVector& a,
-			  const SfSparseVector& b,
-			  float eta,
-			  float c,
-			  float lambda,
-			  SfWeightVector* w);
 
   //------------------------------------------------------------------------------//
   //                         LearnerType Methods                                  //
@@ -237,104 +192,9 @@ namespace sofia_ml {
 				  float lambda,
 				  SfWeightVector* w);
 
-  // Takes a single margin-perceptron step (with margin size = c).
-  bool SingleMarginPerceptronStep(const SfSparseVector& x,
-				  float eta,
-				  float c,
-				  SfWeightVector* w);
-
   // Takes a single ROMMA step.
   bool SingleRommaStep(const SfSparseVector& x,
 		       SfWeightVector* w);
-
-  // Takes a single RANK step with PEGASOS, including regularization and
-  // projection, using vector defined by (a - b), with
-  // y = 1 iff a.GetY() > b.GetY(), y = -1 iff b.GetY() > a.GetY(),
-  // and y = 0 otherwise. Returns true iff the example x was violating KKT
-  // conditions and y != 0.
-  bool SinglePegasosRankStep(const SfSparseVector& a,
-			     const SfSparseVector& b,
-			     float eta,
-			     float lambda,
-			     SfWeightVector* w);
-
-  // Takes a single step with SGD SVM, including regularization and
-  // projection, using vector defined by (a - b), with
-  // y = 1 iff a.GetY() > b.GetY(), y = -1 iff b.GetY() > a.GetY(),
-  // and y = 0 otherwise. Returns true iff the example x was violating KKT
-  // conditions and y != 0.
-  bool SingleSgdSvmRankStep(const SfSparseVector& a,
-			     const SfSparseVector& b,
-			     float eta,
-			     float lambda,
-			     SfWeightVector* w);
-
-  // Takes a single ROMMA rank step.
-  bool SingleRommaRankStep(const SfSparseVector& a,
-			   const SfSparseVector& b,
-			   SfWeightVector* w);
-
-  // Takes a single margin-perceptron step (with margin size = c), on the
-  // vector (a-b).
-  bool SingleMarginPerceptronRankStep(const SfSparseVector& a,
-				      const SfSparseVector& b,
-				      float eta,
-				      float c,
-				      SfWeightVector* w);
-
-  // Takes a single margin-perceptron step (with margin size = c), on the
-  // vector (a-b).
-  bool SingleLeastMeanSquaresRankStep(const SfSparseVector& a,
-				      const SfSparseVector& b,
-				      float eta,
-				      float c,
-				      SfWeightVector* w);
-
-  // Takes a single logistic regression step on vector (a-b), using pegasos
-  // projection for regularization.
-  bool SinglePegasosLogRegRankStep(const SfSparseVector& a,
-                                   const SfSparseVector& b,
-                                   float eta,
-                                   float lambda,
-                                   SfWeightVector* w);
-
-  // Takes a single logistic regression step on vector (a-b), using lambda
-  // regularization.
-  bool SingleLogRegRankStep(const SfSparseVector& a,
-			    const SfSparseVector& b,
-			    float eta,
-			    float lambda,
-			    SfWeightVector* w);
-
-
-  // Takes a single RANK WITH TIES step using PEGASOS, including regularization
-  // and projection.
-  bool SinglePegasosRankWithTiesStep(const SfSparseVector& rank_a,
-                                     const SfSparseVector& rank_b,
-                                     const SfSparseVector& tied_a,
-                                     const SfSparseVector& tied_b,
-                                     float eta,
-                                     float lambda,
-                                     SfWeightVector* w);
-
-  // Takes a single Passive-Aggressive step, including projection if
-  // lambda is greater than 0.0.  Returns true iff the example x was
-  // violating KKT conditions.
-  bool SinglePassiveAggressiveStep(const SfSparseVector& x,
-				   float lambda,
-				   float max_step,
-				   SfWeightVector* w);
-
-  // Takes a single RANK step with Passive-Aggressive method including
-  // projection, using vector defined by (a - b), with
-  // y = 1 iff a.GetY() > b.GetY(), y = -1 iff b.GetY() > a.GetY(),
-  // and y = 0 otherwise. Returns true iff the example x was violating KKT
-  // conditions and y != 0.
-  bool SinglePassiveAggressiveRankStep(const SfSparseVector& a,
-				       const SfSparseVector& b,
-				       float lambda,
-				       float max_step,
-				       SfWeightVector* w);
 
   //-------------------------------------------------------------------
   //                    Non-Member Utility Functions

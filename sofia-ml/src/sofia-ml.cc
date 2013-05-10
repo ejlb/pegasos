@@ -61,22 +61,27 @@ SfWeightVector * LoadModelFromFile(const string& file_name) {
   return w;
 }
 
-SfWeightVector *TrainModel (const SfDataSet& training_data, float lambda) {
-  int iterations = 100000;
-  int dim = 131072;
+SfWeightVector *TrainModel (const SfDataSet& training_data, sofia_ml::SofiaConfig &config) {
+  SfWeightVector* w = new SfWeightVector(config.dimensionality);
 
-  // only used for passive agressive
-  float c = 0.0;
+  if(config.loop_type == sofia_ml::STOCHASTIC) {
+    sofia_ml::StochasticOuterLoop(training_data, 
+                                  config.learner_type,
+                                  config.eta_type,
+                                  config.lambda_param,
+                                  0,
+                                  config.iterations,
+                                  w);
+  }
+  else if(config.loop_type == sofia_ml::BALANCED_STOCHASTIC) {
+    sofia_ml::BalancedStochasticOuterLoop(training_data, 
+                                  config.learner_type,
+                                  config.eta_type,
+                                  config.lambda_param,
+                                  0,
+                                  config.iterations,
+                                  w);
+  }
 
-  SfWeightVector* w  = NULL;
-  w = new SfWeightVector(dim);
-
-  sofia_ml::EtaType eta_type;
-  eta_type = sofia_ml::PEGASOS_ETA;
-
-  sofia_ml::LearnerType learner_type;
-  learner_type = sofia_ml::LOGREG_PEGASOS;
-
-  sofia_ml::StochasticOuterLoop(training_data, learner_type, eta_type, lambda, c, iterations, w);
   return w;
 }
