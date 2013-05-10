@@ -16,11 +16,19 @@ mod.add_include('<cstdlib>')
 sf_weight_vector = mod.add_class('SfWeightVector')
 sf_weight_vector.add_constructor([pg.param('int', 'dimensionality')])
 
+sf_sparse_vector = mod.add_class('SfSparseVector')
+sf_sparse_vector.add_method('GetY', pg.retval('float'), [])
+
 sf_data_set = mod.add_class('SfDataSet')
+sf_data_set.add_constructor([pg.param('bool', 'use_bias_term')])
 sf_data_set.add_constructor([pg.param('const std::string &', 'file_name'),
                              pg.param('bool', 'use_bias_term')])
-
-vecf = mod.add_container('std::vector<float>', 'float', 'vector', custom_name="vecf")
+sf_data_set.add_method('VectorAt', pg.retval('const SfSparseVector &'),
+                                    [pg.param('long int', 'index')])
+sf_data_set.add_method('NumExamples', pg.retval('long int'), [])
+sf_data_set.add_method('AddLabeledVector', None,
+                       [pg.param('const SfSparseVector &', 'x'),
+                        pg.param('float', 'y')])
 
 ns.add_enum('LearnerType', ['PEGASOS', 'LOGREG_PEGASOS', 'LOGREG', 'LMS_REGRESSION', 'SGD_SVM', 'ROMMA'])
 ns.add_enum('EtaType', ['BASIC_ETA', 'PEGASOS_ETA', 'CONSTANT'])
@@ -37,6 +45,8 @@ struct.add_instance_attribute('loop_type', 'LoopType')
 struct.add_instance_attribute('prediction_type', 'PredictionType')
 
 mod.add_function('srand', None, [pg.param('unsigned int', 'seed')])
+
+mod.add_container('std::vector<float>', 'float', 'vector', custom_name="vecf")
 
 mod.add_function('TrainModel',
                  pg.retval('SfWeightVector*', caller_owns_return=True),

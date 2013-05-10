@@ -78,6 +78,16 @@ extern PyTypeObject PySfWeightVector_Type;
 
 typedef struct {
     PyObject_HEAD
+    SfSparseVector *obj;
+    PyBindGenWrapperFlags flags:8;
+} PySfSparseVector;
+
+
+extern PyTypeObject PySfSparseVector_Type;
+
+
+typedef struct {
+    PyObject_HEAD
     SfDataSet *obj;
     PyBindGenWrapperFlags flags:8;
 } PySfDataSet;
@@ -821,7 +831,152 @@ PyTypeObject PySfWeightVector_Type = {
 
 
 static int
-_wrap_PySfDataSet__tp_init(PySfDataSet *self, PyObject *args, PyObject *kwargs)
+_wrap_PySfSparseVector__tp_init(void)
+{
+    PyErr_SetString(PyExc_TypeError, "class 'SfSparseVector' cannot be constructed ()");
+    return -1;
+}
+
+
+PyObject *
+_wrap_PySfSparseVector_GetY(PySfSparseVector *self)
+{
+    PyObject *py_retval;
+    float retval;
+
+    retval = self->obj->GetY();
+    py_retval = Py_BuildValue((char *) "f", retval);
+    return py_retval;
+}
+
+static PyMethodDef PySfSparseVector_methods[] = {
+    {(char *) "GetY", (PyCFunction) _wrap_PySfSparseVector_GetY, METH_NOARGS, NULL },
+    {NULL, NULL, 0, NULL}
+};
+
+static void
+_wrap_PySfSparseVector__tp_dealloc(PySfSparseVector *self)
+{
+        SfSparseVector *tmp = self->obj;
+        self->obj = NULL;
+        if (!(self->flags&PYBINDGEN_WRAPPER_FLAG_OBJECT_NOT_OWNED)) {
+            delete tmp;
+        }
+    self->ob_type->tp_free((PyObject*)self);
+}
+
+static PyObject*
+_wrap_PySfSparseVector__tp_richcompare (PySfSparseVector *PYBINDGEN_UNUSED(self), PySfSparseVector *other, int opid)
+{
+
+    if (!PyObject_IsInstance((PyObject*) other, (PyObject*) &PySfSparseVector_Type)) {
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    }
+    switch (opid)
+    {
+    case Py_LT:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    case Py_LE:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    case Py_EQ:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    case Py_NE:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    case Py_GE:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    case Py_GT:
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    } /* closes switch (opid) */
+    Py_INCREF(Py_NotImplemented);
+    return Py_NotImplemented;
+}
+
+PyTypeObject PySfSparseVector_Type = {
+    PyObject_HEAD_INIT(NULL)
+    0,                                 /* ob_size */
+    (char *) "sofia.SfSparseVector",            /* tp_name */
+    sizeof(PySfSparseVector),                  /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)_wrap_PySfSparseVector__tp_dealloc,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)NULL,       /* tp_getattr */
+    (setattrfunc)NULL,       /* tp_setattr */
+    (cmpfunc)NULL,           /* tp_compare */
+    (reprfunc)NULL,             /* tp_repr */
+    (PyNumberMethods*)NULL,     /* tp_as_number */
+    (PySequenceMethods*)NULL, /* tp_as_sequence */
+    (PyMappingMethods*)NULL,   /* tp_as_mapping */
+    (hashfunc)NULL,             /* tp_hash */
+    (ternaryfunc)NULL,          /* tp_call */
+    (reprfunc)NULL,              /* tp_str */
+    (getattrofunc)NULL,     /* tp_getattro */
+    (setattrofunc)NULL,     /* tp_setattro */
+    (PyBufferProcs*)NULL,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)NULL,     /* tp_traverse */
+    (inquiry)NULL,             /* tp_clear */
+    (richcmpfunc)_wrap_PySfSparseVector__tp_richcompare,   /* tp_richcompare */
+    0,             /* tp_weaklistoffset */
+    (getiterfunc)NULL,          /* tp_iter */
+    (iternextfunc)NULL,     /* tp_iternext */
+    (struct PyMethodDef*)PySfSparseVector_methods, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    0,                     /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)NULL,    /* tp_descr_get */
+    (descrsetfunc)NULL,    /* tp_descr_set */
+    0,                 /* tp_dictoffset */
+    (initproc)_wrap_PySfSparseVector__tp_init,             /* tp_init */
+    (allocfunc)PyType_GenericAlloc,           /* tp_alloc */
+    (newfunc)PyType_GenericNew,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)NULL,             /* tp_is_gc */
+    NULL,                              /* tp_bases */
+    NULL,                              /* tp_mro */
+    NULL,                              /* tp_cache */
+    NULL,                              /* tp_subclasses */
+    NULL,                              /* tp_weaklist */
+    (destructor) NULL                  /* tp_del */
+};
+
+
+
+
+
+static int
+_wrap_PySfDataSet__tp_init__0(PySfDataSet *self, PyObject *args, PyObject *kwargs, PyObject **return_exception)
+{
+    bool use_bias_term;
+    PyObject *py_use_bias_term;
+    const char *keywords[] = {"use_bias_term", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "O", (char **) keywords, &py_use_bias_term)) {
+        {
+            PyObject *exc_type, *traceback;
+            PyErr_Fetch(&exc_type, return_exception, &traceback);
+            Py_XDECREF(exc_type);
+            Py_XDECREF(traceback);
+        }
+        return -1;
+    }
+    use_bias_term = (bool) PyObject_IsTrue(py_use_bias_term);
+    self->obj = new SfDataSet(use_bias_term);
+    self->flags = PYBINDGEN_WRAPPER_FLAG_NONE;
+    return 0;
+}
+
+static int
+_wrap_PySfDataSet__tp_init__1(PySfDataSet *self, PyObject *args, PyObject *kwargs, PyObject **return_exception)
 {
     const char *file_name;
     Py_ssize_t file_name_len;
@@ -831,6 +986,12 @@ _wrap_PySfDataSet__tp_init(PySfDataSet *self, PyObject *args, PyObject *kwargs)
     const char *keywords[] = {"file_name", "use_bias_term", NULL};
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "s#O", (char **) keywords, &file_name, &file_name_len, &py_use_bias_term)) {
+        {
+            PyObject *exc_type, *traceback;
+            PyErr_Fetch(&exc_type, return_exception, &traceback);
+            Py_XDECREF(exc_type);
+            Py_XDECREF(traceback);
+        }
         return -1;
     }
     file_name_std = std::string(file_name, file_name_len);
@@ -840,7 +1001,84 @@ _wrap_PySfDataSet__tp_init(PySfDataSet *self, PyObject *args, PyObject *kwargs)
     return 0;
 }
 
+int _wrap_PySfDataSet__tp_init(PySfDataSet *self, PyObject *args, PyObject *kwargs)
+{
+    int retval;
+    PyObject *error_list;
+    PyObject *exceptions[2] = {0,};
+    retval = _wrap_PySfDataSet__tp_init__0(self, args, kwargs, &exceptions[0]);
+    if (!exceptions[0]) {
+        return retval;
+    }
+    retval = _wrap_PySfDataSet__tp_init__1(self, args, kwargs, &exceptions[1]);
+    if (!exceptions[1]) {
+        Py_DECREF(exceptions[0]);
+        return retval;
+    }
+    error_list = PyList_New(2);
+    PyList_SET_ITEM(error_list, 0, PyObject_Str(exceptions[0]));
+    Py_DECREF(exceptions[0]);
+    PyList_SET_ITEM(error_list, 1, PyObject_Str(exceptions[1]));
+    Py_DECREF(exceptions[1]);
+    PyErr_SetObject(PyExc_TypeError, error_list);
+    Py_DECREF(error_list);
+    return -1;
+}
+
+
+PyObject *
+_wrap_PySfDataSet_AddLabeledVector(PySfDataSet *self, PyObject *args, PyObject *kwargs)
+{
+    PyObject *py_retval;
+    PySfSparseVector *x;
+    float y;
+    const char *keywords[] = {"x", "y", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "O!f", (char **) keywords, &PySfSparseVector_Type, &x, &y)) {
+        return NULL;
+    }
+    self->obj->AddLabeledVector(*((PySfSparseVector *) x)->obj, y);
+    Py_INCREF(Py_None);
+    py_retval = Py_None;
+    return py_retval;
+}
+
+
+PyObject *
+_wrap_PySfDataSet_NumExamples(PySfDataSet *self)
+{
+    PyObject *py_retval;
+    long int retval;
+
+    retval = self->obj->NumExamples();
+    py_retval = Py_BuildValue((char *) "l", retval);
+    return py_retval;
+}
+
+
+PyObject *
+_wrap_PySfDataSet_VectorAt(PySfDataSet *self, PyObject *args, PyObject *kwargs)
+{
+    PyObject *py_retval;
+    long int index;
+    const char *keywords[] = {"index", NULL};
+    PySfSparseVector *py_SfSparseVector;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "l", (char **) keywords, &index)) {
+        return NULL;
+    }
+    SfSparseVector const & retval = self->obj->VectorAt(index);
+    py_SfSparseVector = PyObject_New(PySfSparseVector, &PySfSparseVector_Type);
+    py_SfSparseVector->flags = PYBINDGEN_WRAPPER_FLAG_NONE;
+    py_SfSparseVector->obj = new SfSparseVector(retval);
+    py_retval = Py_BuildValue((char *) "N", py_SfSparseVector);
+    return py_retval;
+}
+
 static PyMethodDef PySfDataSet_methods[] = {
+    {(char *) "AddLabeledVector", (PyCFunction) _wrap_PySfDataSet_AddLabeledVector, METH_KEYWORDS|METH_VARARGS, NULL },
+    {(char *) "NumExamples", (PyCFunction) _wrap_PySfDataSet_NumExamples, METH_NOARGS, NULL },
+    {(char *) "VectorAt", (PyCFunction) _wrap_PySfDataSet_VectorAt, METH_KEYWORDS|METH_VARARGS, NULL },
     {NULL, NULL, 0, NULL}
 };
 
@@ -1197,6 +1435,11 @@ initsofia(void)
         return;
     }
     PyModule_AddObject(m, (char *) "SfWeightVector", (PyObject *) &PySfWeightVector_Type);
+    /* Register the 'SfSparseVector' class */
+    if (PyType_Ready(&PySfSparseVector_Type)) {
+        return;
+    }
+    PyModule_AddObject(m, (char *) "SfSparseVector", (PyObject *) &PySfSparseVector_Type);
     /* Register the 'SfDataSet' class */
     if (PyType_Ready(&PySfDataSet_Type)) {
         return;
