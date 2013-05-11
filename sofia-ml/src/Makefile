@@ -14,7 +14,7 @@
 # limitations under the License.                                                 #
 #================================================================================#
 
-GCC= g++ -fpic -I/Library/Frameworks/Python.framework/Headers/ -c 
+GCC= g++ -fpic -I/Library/Frameworks/Python.framework/Headers/ -I/usr/include/python2.7 -c 
 LINK=g++ -shared -lm -lpython2.7 
 
 #================================================================================#

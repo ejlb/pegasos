@@ -16,21 +16,31 @@ def _remap_labels(label_map, label):
 
     return new_label_map
 
-def one_vs_all(train, test, config):
-    train_cv = sofia.SfDataSet(''.join(train), True)
-    test_cv = sofia.SfDataSet(''.join(test), True)
+def _remap_data(remapped_labels, data):
+    #### use remapped_labels to build a new sf-dataset vi sf-spare-vector
+    return data
 
-    label_map = dict([(i, train_cv.VectorAt(i).GetY()) for i in range(train_cv.NumExamples())])
+def one_vs_all(train, test, config):
+    train_sf = sofia.SfDataSet(''.join(train), True)
+    test_sf = sofia.SfDataSet(''.join(test), True)
+
+    label_map = dict([(i, train_sf.VectorAt(i).GetY())
+        for i in range(train_sf.NumExamples())])
     label_set = set(label_map.values())
+
+    w = []
+    error = []
 
     ## re-map labels for 1-vs-all and average error
     for label in label_set:
-        mapped_labels = _remap_labels(label_map, label)
-        print label, [mapped_labels.values().count(i) for i in set(mapped_labels.values())]
+        remapped_labels = _remap_labels(label_map, label)
+        remapped_train = _remap_data(remapped_labels, train_sf)
+        remapped_test = _remap_data(remapped_labels, test_sf)
 
-    w = sofia.TrainModel(train_cv, config)
-    error = sofia.sofia_ml.SvmObjective(test_cv, w, config)
-    return [error],[w]
+        w.append(sofia.TrainModel(remapped_train, config))
+        error.append(sofia.sofia_ml.SvmObjective(remapped_test, w[-1], config))
+
+    return error, w
 
 if len(sys.argv) != 2:
     print '%s <svm-light-file>' % sys.argv[0]
