@@ -1,4 +1,3 @@
-#include "sf-hash-weight-vector.h"
 #include "sofia-ml-methods.h"
 #include "sf-weight-vector.h"
 
