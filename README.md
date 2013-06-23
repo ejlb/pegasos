@@ -1,9 +1,11 @@
 sofiapy
 =======
 
-Partial python binding for sofia-ml. Currently the bindings are very basic and not every feature of 
-sofia-ml is supported. The bindings require a custom minimal version of sofia-ml and pybindgen. See 
-example/example.py for details
+Partial python binding for sofia-ml. The bindings are basic and not every feature of  sofia-ml is supported. 
+The bindings require a custom minimal version of sofia-ml and pybindgen. See example/example.py for details.
+
+* sofia.so is the raw bindings, can be imported and API matches the c++ API
+* pysofia is a wrapper round the raw bindings which have an sklearn-style interface (WORK IN PROGRESS)
 
 algorithm support
 ------------------
