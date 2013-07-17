@@ -27,6 +27,7 @@
 //----------------------------------------------------------------//
 //---------------- SfSparseVector Public Methods ----------------//
 //----------------------------------------------------------------//
+
 SfSparseVector::SfSparseVector(const char* in_string)
   : y_(0.0), 
     a_(0.0),
@@ -89,6 +90,14 @@ SfSparseVector::SfSparseVector(const SfSparseVector& a,
     ++a_i;
     ++b_i;
   }
+}
+
+SfSparseVector::SfSparseVector(std::vector<float> &x, float y)
+  : y_(y), 
+    a_(0.0),
+    squared_norm_(0.0),
+    group_id_("") {
+  NoBias();
 }
 
 string SfSparseVector::AsString() const {

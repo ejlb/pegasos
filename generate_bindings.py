@@ -13,10 +13,16 @@ mod.add_include('<string>')
 mod.add_include('<vector>')
 mod.add_include('<cstdlib>')
 
+mod.add_container('std::vector<float>', 'float', 'vector', custom_name="vecf")
+
 sf_weight_vector = mod.add_class('SfWeightVector')
 sf_weight_vector.add_constructor([pg.param('int', 'dimensionality')])
 
 sf_sparse_vector = mod.add_class('SfSparseVector')
+sf_sparse_vector.add_constructor([pg.param('std::vector<float> &', 'x'),
+                                  pg.param('float', 'y')])
+sf_sparse_vector.add_constructor([pg.param('const char *', 'in_string')])
+
 sf_sparse_vector.add_method('GetY', pg.retval('float'), [])
 
 sf_data_set = mod.add_class('SfDataSet')
@@ -45,8 +51,6 @@ struct.add_instance_attribute('loop_type', 'LoopType')
 struct.add_instance_attribute('prediction_type', 'PredictionType')
 
 mod.add_function('srand', None, [pg.param('unsigned int', 'seed')])
-
-mod.add_container('std::vector<float>', 'float', 'vector', custom_name="vecf")
 
 mod.add_function('TrainModel',
                  pg.retval('SfWeightVector*', caller_owns_return=True),

@@ -73,6 +73,9 @@ class SfSparseVector {
   // This is useful for ranking problems, etc.
   SfSparseVector(const SfSparseVector& a, const SfSparseVector& b, float y);
 
+  // Constructs a new vector from a vector of floats and a float label
+  SfSparseVector(std::vector<float> &x, float y);
+
   // Returns a string-format representation of the vector, in svm-light format.
   string AsString() const;
 

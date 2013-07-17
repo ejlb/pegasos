@@ -830,10 +830,69 @@ PyTypeObject PySfWeightVector_Type = {
 
 
 
+
 static int
-_wrap_PySfSparseVector__tp_init(void)
+_wrap_PySfSparseVector__tp_init__0(PySfSparseVector *self, PyObject *args, PyObject *kwargs, PyObject **return_exception)
 {
-    PyErr_SetString(PyExc_TypeError, "class 'SfSparseVector' cannot be constructed ()");
+    std::vector<float> x_value;
+    float y;
+    const char *keywords[] = {"x", "y", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "O&f", (char **) keywords, _wrap_convert_py2c__std__vector__lt___float___gt__, &x_value, &y)) {
+        {
+            PyObject *exc_type, *traceback;
+            PyErr_Fetch(&exc_type, return_exception, &traceback);
+            Py_XDECREF(exc_type);
+            Py_XDECREF(traceback);
+        }
+        return -1;
+    }
+    self->obj = new SfSparseVector(x_value, y);
+    self->flags = PYBINDGEN_WRAPPER_FLAG_NONE;
+    return 0;
+}
+
+static int
+_wrap_PySfSparseVector__tp_init__1(PySfSparseVector *self, PyObject *args, PyObject *kwargs, PyObject **return_exception)
+{
+    char const *in_string;
+    const char *keywords[] = {"in_string", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "s", (char **) keywords, &in_string)) {
+        {
+            PyObject *exc_type, *traceback;
+            PyErr_Fetch(&exc_type, return_exception, &traceback);
+            Py_XDECREF(exc_type);
+            Py_XDECREF(traceback);
+        }
+        return -1;
+    }
+    self->obj = new SfSparseVector(in_string);
+    self->flags = PYBINDGEN_WRAPPER_FLAG_NONE;
+    return 0;
+}
+
+int _wrap_PySfSparseVector__tp_init(PySfSparseVector *self, PyObject *args, PyObject *kwargs)
+{
+    int retval;
+    PyObject *error_list;
+    PyObject *exceptions[2] = {0,};
+    retval = _wrap_PySfSparseVector__tp_init__0(self, args, kwargs, &exceptions[0]);
+    if (!exceptions[0]) {
+        return retval;
+    }
+    retval = _wrap_PySfSparseVector__tp_init__1(self, args, kwargs, &exceptions[1]);
+    if (!exceptions[1]) {
+        Py_DECREF(exceptions[0]);
+        return retval;
+    }
+    error_list = PyList_New(2);
+    PyList_SET_ITEM(error_list, 0, PyObject_Str(exceptions[0]));
+    Py_DECREF(exceptions[0]);
+    PyList_SET_ITEM(error_list, 1, PyObject_Str(exceptions[1]));
+    Py_DECREF(exceptions[1]);
+    PyErr_SetObject(PyExc_TypeError, error_list);
+    Py_DECREF(error_list);
     return -1;
 }
 
