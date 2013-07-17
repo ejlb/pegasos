@@ -20,6 +20,8 @@ import sofia
 # tests
 # configure script
 
+LOOP_STOCHASTIC_BALANCED = sofia.sofia_ml.STOCHASTIC_BALANCED
+LOOP_STOCHASTIC = sofia.sofia_ml.STOCHASTIC
 
 class SofiaBase(BaseEstimator, ClassifierMixin):
     __metaclass__ = ABCMeta
@@ -31,7 +33,7 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
                  lreg=0.1,
                  eta_type=sofia.sofia_ml.PEGASOS_ETA,
                  learner_type=sofia.sofia_ml.PEGASOS,
-                 loop_type=sofia.sofia_ml.STOCHASTIC):
+                 loop_type=LOOP_STOCHASTIC_BALANCED):
 
         self.support_vectors = None
         self.sofia_config = sofia.sofia_ml.SofiaConfig()
@@ -82,7 +84,7 @@ class PegasosSVMClassifier(SofiaBase):
                  dimensionality=2<<16,
                  lreg=0.1,
                  eta_type=sofia.sofia_ml.PEGASOS_ETA,
-                 loop_type=sofia.sofia_ml.STOCHASTIC):
+                 loop_type=LOOP_STOCHASTIC_BALANCED):
 
         super(PegasosSVMClassifier, self).__init__(
                 iterations,
@@ -99,7 +101,7 @@ class PegasosLMSRegression(SofiaBase):
                  dimensionality=2<<16,
                  lreg=0.1,
                  eta_type=sofia.sofia_ml.PEGASOS_ETA,
-                 loop_type=sofia.sofia_ml.STOCHASTIC):
+                 loop_type=LOOP_STOCHASTIC_BALANCED):
 
         super(PegasosLMSRegression, self).__init__(
                 iterations,
@@ -116,7 +118,7 @@ class PegasosLogisticRegression(SofiaBase):
                  dimensionality=2<<16,
                  lreg=0.1,
                  eta_type=sofia.sofia_ml.PEGASOS_ETA,
-                 loop_type=sofia.sofia_ml.STOCHASTIC):
+                 loop_type=LOOP_STOCHASTIC_BALANCED):
 
         super(PegasosLogisticRegression, self).__init__(
                 iterations,
@@ -133,7 +135,7 @@ class SGDSVMClassifier(SofiaBase):
                  dimensionality=2<<16,
                  lreg=0.1,
                  eta_type=sofia.sofia_ml.PEGASOS_ETA,
-                 loop_type=sofia.sofia_ml.STOCHASTIC):
+                 loop_type=LOOP_STOCHASTIC_BALANCED):
 
         super(SGDSVMClassifier, self).__init__(
                 iterations,
@@ -150,7 +152,7 @@ class LogisticRegression(SofiaBase):
                  dimensionality=2<<16,
                  lreg=0.1,
                  eta_type=sofia.sofia_ml.PEGASOS_ETA,
-                 loop_type=sofia.sofia_ml.STOCHASTIC):
+                 loop_type=LOOP_STOCHASTIC_BALANCED):
 
         super(LogisticRegression, self).__init__(
                 iterations,

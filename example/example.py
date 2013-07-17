@@ -35,9 +35,9 @@ if __name__ == '__main__':
     print 'sgd', SGDClassifier().fit(X, y).score(X,y)
     print 'log', LogisticRegression().fit(X, y).score(X,y)
     print
-    print 'svm', sofiapy.PegasosSVMClassifier().fit(X, y).score(X,y)
+    print 'svm', sofiapy.PegasosSVMClassifier(loop_type=sofiapy.LOOP_STOCHASTIC_BALANCED).fit(X, y).score(X,y)
+    print 'plg', sofiapy.PegasosLogisticRegression(loop_type=sofiapy.LOOP_STOCHASTIC_BALANCED).fit(X, y).score(X,y)
     print 'lms', sofiapy.PegasosLMSRegression().fit(X, y).score(X,y)
-    print 'plg', sofiapy.PegasosLogisticRegression().fit(X, y).score(X,y)
     print 'sgd', sofiapy.SGDSVMClassifier().fit(X, y).score(X,y)
     print 'log', sofiapy.LogisticRegression().fit(X, y).score(X,y)
     ###########
