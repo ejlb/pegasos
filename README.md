@@ -1,14 +1,14 @@
 sofiapy
 =======
 
-Sklearn-like python binding for sofia-ml. The bindings do not include every feature of sofia-ml. The bindings require a custom minimal version of sofia-ml and pybindgen. See example/example.py for details.
+`sofiapy` is a set sklearn-like python binding for the google tool `sofia-ml`. These bindings do not include every feature of sofia-ml; the ranking and perceptron functionality are not included because the bindings were primary for the pegasos functionality. The bindings require a custom minimal version of sofia-ml (included), pybindgen and sklearn. See example/example.py for details.
 
 * sofia.so is the raw bindings, can be imported and API matches the c++ API
 * sofiapy is a wrapper round the raw bindings which have an sklearn-style interface
 
 algorithm support
 ------------------
-* learners: pegasos svm, logreg pegasos, lms pegasos, sgd svm, romma and logreg
+* learners: pegasos svm, logreg pegasos, lms pegasos, sgd svm, and logreg
 * eta: basic, pegasos, constant
 * loops: stochastic, balanced stochastic
 * predictions: linear, logistic

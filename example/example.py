@@ -40,7 +40,6 @@ if __name__ == '__main__':
     print 'plg', sofiapy.PegasosLogisticRegression().fit(X, y).score(X,y)
     print 'sgd', sofiapy.SGDSVMClassifier().fit(X, y).score(X,y)
     print 'log', sofiapy.LogisticRegression().fit(X, y).score(X,y)
-    print 'rom', sofiapy.ROMMAClassifier().fit(X, y).score(X,y)
     ###########
 
     for params in IterGrid(param_grid):

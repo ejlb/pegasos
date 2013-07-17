@@ -198,8 +198,6 @@ namespace sofia_ml {
       return SingleLeastMeanSquaresStep(x, eta, lambda, w);
     case SGD_SVM:
       return SingleSgdSvmStep(x, eta, lambda, w);
-    case ROMMA:
-      return SingleRommaStep(x, w);
     default:
       std::cerr << "Error: learner_type " << learner_type
 		<< " not supported." << std::endl;
@@ -224,32 +222,6 @@ namespace sofia_ml {
     }
 
     PegasosProjection(lambda, w);
-    return (p < 1.0 && x.GetY() != 0.0);
-  }
-
-  bool SingleRommaStep(const SfSparseVector& x,
-		       SfWeightVector* w) {
-    float wx = w->InnerProduct(x);
-    float p = x.GetY() * wx;
-    const float kVerySmallNumber = 0.0000000001;
-    
-    // If x has non-zero loss, perform gradient step in direction of x.
-    if (p < 1.0 && x.GetY() != 0.0) {
-      float xx = x.GetSquaredNorm();
-      float ww = w->GetSquaredNorm();
-      float c = ((xx * ww) - p + kVerySmallNumber) /
-	((xx * ww) - (wx * wx) + kVerySmallNumber);
-
-      float d = (ww * (x.GetY() - wx) + kVerySmallNumber) /
-	((xx * ww) - (wx * wx) + kVerySmallNumber);
-
-      // Avoid numerical problems caused by examples of extremely low magnitude.
-      if (c >= 0.0) {
-	w->ScaleBy(c);
-	w->AddVector(x, d); 
-      }
-    }
-
     return (p < 1.0 && x.GetY() != 0.0);
   }
 

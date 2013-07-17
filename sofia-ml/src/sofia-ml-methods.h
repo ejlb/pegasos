@@ -53,7 +53,6 @@ namespace sofia_ml {
     LMS_REGRESSION, // Least-mean-squares Regression (using Pegasos projection), and lambda
                     //as regularization parameter.
     SGD_SVM,  // Stochastic Gradient Descent SVM; lambda is regularization parameter.
-    ROMMA  // ROMMA algorithm; takes no regularization parameter.
   };
 
   // Learning rate Eta may be set in different ways.
@@ -191,10 +190,6 @@ namespace sofia_ml {
 				  float eta,
 				  float lambda,
 				  SfWeightVector* w);
-
-  // Takes a single ROMMA step.
-  bool SingleRommaStep(const SfSparseVector& x,
-		       SfWeightVector* w);
 
   //-------------------------------------------------------------------
   //                    Non-Member Utility Functions

@@ -144,23 +144,6 @@ class SGDSVMClassifier(SofiaBase):
                 loop_type)
 
 
-class ROMMAClassifier(SofiaBase):
-    def __init__(self,
-                 iterations=10000,
-                 dimensionality=2<<16,
-                 lreg=0.1,
-                 eta_type=sofia.sofia_ml.PEGASOS_ETA,
-                 loop_type=sofia.sofia_ml.STOCHASTIC):
-
-        super(ROMMAClassifier, self).__init__(
-                iterations,
-                dimensionality,
-                lreg,
-                eta_type,
-                sofia.sofia_ml.ROMMA,
-                loop_type)
-
-
 class LogisticRegression(SofiaBase):
     def __init__(self,
                  iterations=10000,
