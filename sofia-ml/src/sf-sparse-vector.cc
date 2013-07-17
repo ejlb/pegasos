@@ -97,7 +97,12 @@ SfSparseVector::SfSparseVector(std::vector<float> &x, float y)
     a_(0.0),
     squared_norm_(0.0),
     group_id_("") {
+
   NoBias();
+    
+  for(std::vector<float>::size_type i = 1; i <= x.size(); i++) {
+    PushPair(i, x[i-1]);
+  }
 }
 
 string SfSparseVector::AsString() const {

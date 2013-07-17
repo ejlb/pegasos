@@ -4,16 +4,18 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 import numpy as np
 import sofia
 
-### c++ sparse_vector interface
-    # empty constructor
-    # add(vector, label)
-    # add(vector)
+# prediction (objective?)
 
-# prediction (how does it differ from objective, do we need our own objective?)
+# probabalistic prediction for SVMs
+    # svm base class with predict_proba
 
-# probabalistic prediction for SVMs (override predict_proba)
+# weighting (balanced stochastic loop?)
 
 # multi-label classification
+
+# deal with sparsity (like svm-light -- maybe a python dict or sparse matrix)
+# bias term
+
 # documentation
 # tests
 # configure script
@@ -24,7 +26,7 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
 
     @abstractmethod
     def __init__(self,
-                 iterations=10000,
+                 iterations=100000,
                  dimensionality=2<<16,
                  lreg=0.1,
                  eta_type=sofia.sofia_ml.PEGASOS_ETA,
@@ -49,7 +51,7 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
 
         for i, xi in enumerate(X):
             yi = y[i] if np.all(y) != None else 0.0
-            sparse_vector = sofia.SfSparseVector(xi, yi)
+            sparse_vector = sofia.SfSparseVector(list(xi), yi)
             sofia_dataset.AddLabeledVector(sparse_vector, yi)
 
         return sofia_dataset
@@ -57,6 +59,7 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
     def fit(self, X, y):
         sofia_dataset = self._sofia_dataset(X, y)
         self.support_vectors = sofia.TrainModel(sofia_dataset, self.sofia_config)
+        return self
 
     def predict(self, X):
         if not self.support_vectors:
@@ -64,17 +67,13 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
 
         sofia_X = self._sofia_dataset(X)
         self.sofia_config.prediction_type = sofia.sofia_ml.LINEAR
-        return sofia.sofia.sofia_ml.SvmPredictionsOnTestSet(sofia_X, self.support_vectors, self.sofia_config)
+        predictions = sofia.sofia_ml.SvmPredictionsOnTestSet(sofia_X, self.support_vectors)
 
-    """
-    def predict_proba(self, X):
-        if not self.support_vectors:
-            raise ValueError('must call `fit` before `predict_proba`')
+        return map(lambda x: 1 if x > 0 else 0, list(predictions))
 
-        sofia_X = self._sofia_dataset(X)
-        self.sofia_config.prediction_type = sofia.sofia_ml.LOGISTIC
-        return sofia.sofia.sofia_ml.LogisticPredictionsOnTestSet(sofia_X, self.support_vectors, self.sofia_config)
-    """
+    def error(self, X, y):
+        sofia_dataset = self._sofia_dataset(X, y)
+        return sofia.sofia_ml.SvmObjective(sofia_dataset, self.support_vectors, self.sofia_config)
 
 
 class PegasosSVMClassifier(SofiaBase):
@@ -119,7 +118,7 @@ class PegasosLogisticRegression(SofiaBase):
                  eta_type=sofia.sofia_ml.PEGASOS_ETA,
                  loop_type=sofia.sofia_ml.STOCHASTIC):
 
-        super(PegasosLMSRegression, self).__init__(
+        super(PegasosLogisticRegression, self).__init__(
                 iterations,
                 dimensionality,
                 lreg,
@@ -141,7 +140,7 @@ class SGDSVMClassifier(SofiaBase):
                 dimensionality,
                 lreg,
                 eta_type,
-                sofia.sofia_ml.SDG_SVM,
+                sofia.sofia_ml.SGD_SVM,
                 loop_type)
 
 
