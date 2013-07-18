@@ -36,7 +36,7 @@ sf_data_set.add_method('AddLabeledVector', None,
                        [pg.param('const SfSparseVector &', 'x'),
                         pg.param('float', 'y')])
 
-ns.add_enum('LearnerType', ['PEGASOS', 'LOGREG_PEGASOS', 'LOGREG', 'LMS_REGRESSION', 'SGD_SVM', 'ROMMA'])
+ns.add_enum('LearnerType', ['PEGASOS', 'LOGREG_PEGASOS', 'LOGREG', 'LMS_REGRESSION', 'SGD_SVM'])
 ns.add_enum('EtaType', ['BASIC_ETA', 'PEGASOS_ETA', 'CONSTANT'])
 ns.add_enum('LoopType', ['STOCHASTIC', 'BALANCED_STOCHASTIC'])
 ns.add_enum('PredictionType', ['LINEAR', 'LOGISTIC'])

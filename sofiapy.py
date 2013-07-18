@@ -4,12 +4,8 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 import numpy as np
 import sofia
 
-# prediction (objective?)
-
 # probabalistic prediction for SVMs
-    # svm base class with predict_proba
-
-# weighting (balanced stochastic loop?)
+    # svm base class with/without predict_proba
 
 # multi-label classification
 
@@ -20,8 +16,15 @@ import sofia
 # tests
 # configure script
 
-LOOP_STOCHASTIC_BALANCED = sofia.sofia_ml.STOCHASTIC_BALANCED
+ETA_BASIC = sofia.sofia_ml.BASIC_ETA
+ETA_PEGASOS = sofia.sofia_ml.PEGASOS_ETA
+ETA_CONSTANT = sofia.sofia_ml.CONSTANT
+
+LOOP_BALANCED_STOCHASTIC = sofia.sofia_ml.BALANCED_STOCHASTIC
 LOOP_STOCHASTIC = sofia.sofia_ml.STOCHASTIC
+
+PREDICTION_LINEAR = sofia.sofia_ml.LINEAR
+PREDICTION_LOGISTIC = sofia.sofia_ml.LOGISTIC
 
 class SofiaBase(BaseEstimator, ClassifierMixin):
     __metaclass__ = ABCMeta
@@ -31,9 +34,9 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
                  iterations=100000,
                  dimensionality=2<<16,
                  lreg=0.1,
-                 eta_type=sofia.sofia_ml.PEGASOS_ETA,
+                 eta_type=ETA_PEGASOS,
                  learner_type=sofia.sofia_ml.PEGASOS,
-                 loop_type=LOOP_STOCHASTIC_BALANCED):
+                 loop_type=LOOP_BALANCED_STOCHASTIC):
 
         self.support_vectors = None
         self.sofia_config = sofia.sofia_ml.SofiaConfig()
@@ -68,7 +71,7 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
             raise ValueError('must call `fit` before `predict`')
 
         sofia_X = self._sofia_dataset(X)
-        self.sofia_config.prediction_type = sofia.sofia_ml.LINEAR
+        self.sofia_config.prediction_type = PREDICTION_LINEAR
         predictions = sofia.sofia_ml.SvmPredictionsOnTestSet(sofia_X, self.support_vectors)
 
         return map(lambda x: 1 if x > 0 else 0, list(predictions))
@@ -83,8 +86,8 @@ class PegasosSVMClassifier(SofiaBase):
                  iterations=10000,
                  dimensionality=2<<16,
                  lreg=0.1,
-                 eta_type=sofia.sofia_ml.PEGASOS_ETA,
-                 loop_type=LOOP_STOCHASTIC_BALANCED):
+                 eta_type=ETA_PEGASOS,
+                 loop_type=LOOP_BALANCED_STOCHASTIC):
 
         super(PegasosSVMClassifier, self).__init__(
                 iterations,
@@ -100,8 +103,8 @@ class PegasosLMSRegression(SofiaBase):
                  iterations=10000,
                  dimensionality=2<<16,
                  lreg=0.1,
-                 eta_type=sofia.sofia_ml.PEGASOS_ETA,
-                 loop_type=LOOP_STOCHASTIC_BALANCED):
+                 eta_type=ETA_PEGASOS,
+                 loop_type=LOOP_BALANCED_STOCHASTIC):
 
         super(PegasosLMSRegression, self).__init__(
                 iterations,
@@ -117,8 +120,8 @@ class PegasosLogisticRegression(SofiaBase):
                  iterations=10000,
                  dimensionality=2<<16,
                  lreg=0.1,
-                 eta_type=sofia.sofia_ml.PEGASOS_ETA,
-                 loop_type=LOOP_STOCHASTIC_BALANCED):
+                 eta_type=ETA_PEGASOS,
+                 loop_type=LOOP_BALANCED_STOCHASTIC):
 
         super(PegasosLogisticRegression, self).__init__(
                 iterations,
@@ -134,8 +137,8 @@ class SGDSVMClassifier(SofiaBase):
                  iterations=10000,
                  dimensionality=2<<16,
                  lreg=0.1,
-                 eta_type=sofia.sofia_ml.PEGASOS_ETA,
-                 loop_type=LOOP_STOCHASTIC_BALANCED):
+                 eta_type=ETA_PEGASOS,
+                 loop_type=LOOP_BALANCED_STOCHASTIC):
 
         super(SGDSVMClassifier, self).__init__(
                 iterations,
@@ -151,8 +154,8 @@ class LogisticRegression(SofiaBase):
                  iterations=10000,
                  dimensionality=2<<16,
                  lreg=0.1,
-                 eta_type=sofia.sofia_ml.PEGASOS_ETA,
-                 loop_type=LOOP_STOCHASTIC_BALANCED):
+                 eta_type=ETA_PEGASOS,
+                 loop_type=LOOP_BALANCED_STOCHASTIC):
 
         super(LogisticRegression, self).__init__(
                 iterations,

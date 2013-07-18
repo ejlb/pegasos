@@ -1,5 +1,6 @@
 all:
 	cd sofia-ml/src; make
+	ipython ./tests.py
 
 clean:
 	cd sofia-ml/src; make clean

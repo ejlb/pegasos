@@ -595,7 +595,6 @@ initsofia_sofia_ml(void)
     PyModule_AddIntConstant(m, (char *) "LOGREG", sofia_ml::LOGREG);
     PyModule_AddIntConstant(m, (char *) "LMS_REGRESSION", sofia_ml::LMS_REGRESSION);
     PyModule_AddIntConstant(m, (char *) "SGD_SVM", sofia_ml::SGD_SVM);
-    PyModule_AddIntConstant(m, (char *) "ROMMA", sofia_ml::ROMMA);
     PyModule_AddIntConstant(m, (char *) "BASIC_ETA", sofia_ml::BASIC_ETA);
     PyModule_AddIntConstant(m, (char *) "PEGASOS_ETA", sofia_ml::PEGASOS_ETA);
     PyModule_AddIntConstant(m, (char *) "CONSTANT", sofia_ml::CONSTANT);
