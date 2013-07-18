@@ -1,13 +1,18 @@
 from abc import ABCMeta, abstractmethod
-from sklearn.base import BaseEstimator, ClassifierMixin
 
 import numpy as np
 import sofia
 
+from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.preprocessing import LabelEncoder
+from sklearn.utils import atleast2d_or_csr
+
+# multi-label classification
+    # The base estimator should implement decision_function or predict_proba!
+
 # probabalistic prediction for SVMs
     # svm base class with/without predict_proba
 
-# multi-label classification
 
 # deal with sparsity (like svm-light -- maybe a python dict or sparse matrix)
 # bias term
@@ -25,6 +30,7 @@ LOOP_STOCHASTIC = sofia.sofia_ml.STOCHASTIC
 
 PREDICTION_LINEAR = sofia.sofia_ml.LINEAR
 PREDICTION_LOGISTIC = sofia.sofia_ml.LOGISTIC
+
 
 class SofiaBase(BaseEstimator, ClassifierMixin):
     __metaclass__ = ABCMeta
@@ -62,7 +68,22 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
         return sofia_dataset
 
     def fit(self, X, y):
+        self._enc = LabelEncoder()
+        y = self._enc.fit_transform(y)
+
+        if len(self.classes_) < 2:
+            raise ValueError("The number of classes has to be greater than"
+                             " one.")
+
+        X = atleast2d_or_csr(X, dtype=np.float64, order="C")
+
+        if X.shape[0] != y.shape[0]:
+            raise ValueError("X and y have incompatible shapes.\n"
+                             "X has %s samples, but y has %s." %
+                             (X.shape[0], y.shape[0]))
+
         sofia_dataset = self._sofia_dataset(X, y)
+
         self.support_vectors = sofia.TrainModel(sofia_dataset, self.sofia_config)
         return self
 
@@ -75,6 +96,10 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
         predictions = sofia.sofia_ml.SvmPredictionsOnTestSet(sofia_X, self.support_vectors)
 
         return map(lambda x: 1 if x > 0 else 0, list(predictions))
+
+    @property
+    def classes_(self):
+        return self._enc.classes_
 
     def error(self, X, y):
         sofia_dataset = self._sofia_dataset(X, y)

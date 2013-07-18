@@ -1,18 +1,14 @@
 import time
 import sofiapy
 
-from sklearn.datasets import make_classification
+from sklearn.datasets import load_digits
 from sklearn.cross_validation import KFold
 from sklearn.grid_search import IterGrid
 
-def _test_data():
-    X, y = make_classification(
-            n_features=5, n_redundant=1, n_informative=4,
-            random_state=1, n_clusters_per_class=1)
-    return X, y
-
 if __name__ == '__main__':
-    X, y = _test_data()
+    data = load_digits(2)
+    X = data['data']
+    y = data['target']
 
     param_grid = {
         'lambda' : [0.0001, 0.001, 0.01, 0.1, 0.5, 1],
