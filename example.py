@@ -25,7 +25,7 @@ if __name__ == '__main__':
             train_X, train_y = X[train], y[train]
             test_X, test_y = X[test], y[test]
 
-            model = sofiapy.PegasosLogisticRegression(lreg=params['lambda'])
+            model = sofiapy.PegasosSVMClassifier(lreg=params['lambda'])
             model.fit(train_X, train_y)
             cv_runs.append(model.score(test_X, test_y))
 

@@ -4,18 +4,16 @@ import numpy as np
 import sofia
 
 from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import atleast2d_or_csr
 
 # multi-label classification
-    # The base estimator should implement decision_function or predict_proba!
+    # use composition in base
 
-# probabalistic prediction for SVMs
-    # svm base class with/without predict_proba
-
-
-# deal with sparsity (like svm-light -- maybe a python dict or sparse matrix)
-# bias term
+# deal with sparsity (like svm-light -- sparse matrix)
+# bias term/intercept
+# load/save
 
 # documentation
 # tests
@@ -61,7 +59,10 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
         sofia_dataset = sofia.SfDataSet(True)
 
         for i, xi in enumerate(X):
+            # use dummy labels when predicting
             yi = y[i] if np.all(y) != None else 0.0
+
+            ### need to handle this sparsly
             sparse_vector = sofia.SfSparseVector(list(xi), yi)
             sofia_dataset.AddLabeledVector(sparse_vector, yi)
 
@@ -106,7 +107,66 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
         return sofia.sofia_ml.SvmObjective(sofia_dataset, self.support_vectors, self.sofia_config)
 
 
-class PegasosSVMClassifier(SofiaBase):
+class SVMSofiaBase(SofiaBase):
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def __init__(self,
+                 iterations,
+                 dimensionality,
+                 lreg,
+                 eta_type,
+                 learner_type,
+                 loop_type):
+
+        if learner_type not in [sofia.sofia_ml.PEGASOS, sofia.sofia_ml.SGD_SVM]:
+            raise ValueError('%s only supports SVM learners' % self.__class__.__name__)
+
+        super(SVMSofiaBase, self).__init__(
+                iterations,
+                dimensionality,
+                lreg,
+                eta_type,
+                learner_type,
+                loop_type)
+
+
+class LogisticSofiaBase(SofiaBase):
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def __init__(self,
+                 iterations,
+                 dimensionality,
+                 lreg,
+                 eta_type,
+                 learner_type,
+                 loop_type):
+
+        if learner_type not in [
+                sofia.sofia_ml.LOGREG,
+                sofia.sofia_ml.LOGREG_PEGASOS,
+                sofia.sofia_ml.LMS_REGRESSION]:
+            raise ValueError('%s only supports logistic learners' % self.__class__.__name__)
+
+        super(LogisticSofiaBase, self).__init__(
+                iterations,
+                dimensionality,
+                lreg,
+                eta_type,
+                learner_type,
+                loop_type)
+
+    def predict_proba(self, X):
+        if not self.support_vectors:
+            raise ValueError('must call `fit` before `predict`')
+
+        sofia_X = self._sofia_dataset(X)
+        self.sofia_config.prediction_type = PREDICTION_LOGISTIC
+        return sofia.sofia_ml.SvmPredictionsOnTestSet(sofia_X, self.support_vectors)
+
+
+class PegasosSVMClassifier(SVMSofiaBase):
     def __init__(self,
                  iterations=10000,
                  dimensionality=2<<16,
@@ -123,41 +183,7 @@ class PegasosSVMClassifier(SofiaBase):
                 loop_type)
 
 
-class PegasosLMSRegression(SofiaBase):
-    def __init__(self,
-                 iterations=10000,
-                 dimensionality=2<<16,
-                 lreg=0.1,
-                 eta_type=ETA_PEGASOS,
-                 loop_type=LOOP_BALANCED_STOCHASTIC):
-
-        super(PegasosLMSRegression, self).__init__(
-                iterations,
-                dimensionality,
-                lreg,
-                eta_type,
-                sofia.sofia_ml.LMS_REGRESSION,
-                loop_type)
-
-
-class PegasosLogisticRegression(SofiaBase):
-    def __init__(self,
-                 iterations=10000,
-                 dimensionality=2<<16,
-                 lreg=0.1,
-                 eta_type=ETA_PEGASOS,
-                 loop_type=LOOP_BALANCED_STOCHASTIC):
-
-        super(PegasosLogisticRegression, self).__init__(
-                iterations,
-                dimensionality,
-                lreg,
-                eta_type,
-                sofia.sofia_ml.LOGREG_PEGASOS,
-                loop_type)
-
-
-class SGDSVMClassifier(SofiaBase):
+class SGDSVMClassifier(SVMSofiaBase):
     def __init__(self,
                  iterations=10000,
                  dimensionality=2<<16,
@@ -174,7 +200,41 @@ class SGDSVMClassifier(SofiaBase):
                 loop_type)
 
 
-class LogisticRegression(SofiaBase):
+class PegasosLogisticRegression(LogisticSofiaBase):
+    def __init__(self,
+                 iterations=10000,
+                 dimensionality=2<<16,
+                 lreg=0.1,
+                 eta_type=ETA_PEGASOS,
+                 loop_type=LOOP_BALANCED_STOCHASTIC):
+
+        super(PegasosLogisticRegression, self).__init__(
+                iterations,
+                dimensionality,
+                lreg,
+                eta_type,
+                sofia.sofia_ml.LOGREG_PEGASOS,
+                loop_type)
+
+
+class PegasosLMSRegression(LogisticSofiaBase):
+    def __init__(self,
+                 iterations=10000,
+                 dimensionality=2<<16,
+                 lreg=0.1,
+                 eta_type=ETA_PEGASOS,
+                 loop_type=LOOP_BALANCED_STOCHASTIC):
+
+        super(PegasosLMSRegression, self).__init__(
+                iterations,
+                dimensionality,
+                lreg,
+                eta_type,
+                sofia.sofia_ml.LMS_REGRESSION,
+                loop_type)
+
+
+class LogisticRegression(LogisticSofiaBase):
     def __init__(self,
                  iterations=10000,
                  dimensionality=2<<16,
@@ -189,4 +249,5 @@ class LogisticRegression(SofiaBase):
                 eta_type,
                 sofia.sofia_ml.LOGREG,
                 loop_type)
+
 

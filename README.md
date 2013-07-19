@@ -37,3 +37,6 @@ has the same defaults as the sofia-ml command line tool:
 
 The sklearn-like bindings do not need to use SofiaConfig directly.
 
+todo
+----
+* predict_proba for SVM classifiers
