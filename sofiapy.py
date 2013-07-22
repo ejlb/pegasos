@@ -5,13 +5,13 @@ import sofia
 
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.preprocessing import LabelEncoder
-from sklearn.multiclass import OneVsRestClassifier
 from sklearn.utils import atleast2d_or_csr
 
+# speed
+    # test again SVC/LinearSVC/samples/features
+
 # deal with sparsity (like svm-light -- sparse matrix)
-
 # predict with custom support-vectors (not fit/load from disk)
-
 # bias term/intercept
 # load/save
 
@@ -38,19 +38,19 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
                  iterations,
                  dimensionality,
                  lreg,
-                 eta_type=ETA_PEGASOS,
-                 learner_type=sofia.sofia_ml.PEGASOS,
-                 loop_type=LOOP_BALANCED_STOCHASTIC):
+                 eta_type,
+                 learner_type,
+                 loop_type):
 
         self.support_vectors = None
         self.sofia_config = sofia.sofia_ml.SofiaConfig()
 
-        self.sofia_config.iterations = iterations
-        self.sofia_config.dimensionality = dimensionality
-        self.sofia_config.lambda_param = lreg
-        self.sofia_config.eta_type = eta_type
+        self.iterations = self.sofia_config.iterations = iterations
+        self.dimensionality = self.sofia_config.dimensionality = dimensionality
+        self.lreg = self.sofia_config.lambda_param = lreg
+        self.eta_type = self.sofia_config.eta_type = eta_type
+        self.loop_type = self.sofia_config.loop_type = loop_type
         self.sofia_config.learner_type = learner_type
-        self.sofia_config.loop_type = loop_type
 
     def _sofia_dataset(self, X, y=None):
         if np.all(y) and len(X) != len(y):
@@ -59,10 +59,7 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
         sofia_dataset = sofia.SfDataSet(True)
 
         for i, xi in enumerate(X):
-            # use dummy labels when predicting
             yi = y[i] if np.all(y) != None else 0.0
-
-            ### need to handle this sparsly
             sparse_vector = sofia.SfSparseVector(list(xi), yi)
             sofia_dataset.AddLabeledVector(sparse_vector, yi)
 
@@ -72,9 +69,14 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
         self._enc = LabelEncoder()
         y = self._enc.fit_transform(y)
 
-        if len(self.classes_) < 2:
-            raise ValueError("The number of classes has to be greater than"
-                             " one.")
+        if len(self.classes_) != 2:
+            raise ValueError("The number of classes must be 2, use sklearn.multiclass for more classes.")
+
+        """
+        the LabelEncoder maps the binary labels to 0 and 1 but the svmlight
+        format used by sofia-ml requires the labels to be -1 and +1
+        """
+        y[y==0] = -1
 
         X = atleast2d_or_csr(X, dtype=np.float64, order="C")
 
@@ -94,10 +96,11 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
 
     @property
     def classes_(self):
+        if not hasattr(self, '_enc'):
+            raise ValueError('must call `fit` before `classes_`')
         return self._enc.classes_
 
-    @property
-    def sofia_error_(self, X, y):
+    def _sofia_error(self, X, y):
         sofia_dataset = self._sofia_dataset(X, y)
         return sofia.sofia_ml.SvmObjective(sofia_dataset, self.support_vectors, self.sofia_config)
 
@@ -126,7 +129,7 @@ class SVMSofiaBase(SofiaBase):
                 loop_type)
 
     def predict(self, X):
-        return map(lambda x: 1 if x > 0 else 0, list(self.decision_function(X)))
+        return map(lambda x: 1 if x > 0 else 0, self.decision_function(X))
 
     def decision_function(self, X):
         if not self.support_vectors:
@@ -134,7 +137,7 @@ class SVMSofiaBase(SofiaBase):
 
         self.sofia_config.prediction_type = PREDICTION_LINEAR
         sofia_X = self._sofia_dataset(X)
-        return sofia.sofia_ml.SvmPredictionsOnTestSet(sofia_X, self.support_vectors)
+        return np.array(list(sofia.sofia_ml.SvmPredictionsOnTestSet(sofia_X, self.support_vectors)))
 
 
 class LogisticSofiaBase(SofiaBase):
@@ -183,24 +186,15 @@ class LogisticSofiaBase(SofiaBase):
         return sofia.sofia_ml.LogisticPredictionsOnTestSet(sofia_X, self.support_vectors)
 
 
-class OneVsRest:
-    """ A decorator for transparently turning binary classifiers into multilabel classifiers """
-    def __call__(self, f):
-        def wrap(init_self, *args, **kwargs):
-            OneVsRestClassifier(f(init_self, *args, **kwargs))
-        return wrap
-
-
 class PegasosSVMClassifier(SVMSofiaBase):
-    @OneVsRest()
     def __init__(self,
-                 iterations=10000,
+                 iterations=100000,
                  dimensionality=2<<16,
                  lreg=0.1,
                  eta_type=ETA_PEGASOS,
                  loop_type=LOOP_BALANCED_STOCHASTIC):
 
-        super(PegasosSVMClassifier, self).__init__(
+        super(SVMSofiaBase, self).__init__(
                 iterations,
                 dimensionality,
                 lreg,
@@ -210,7 +204,6 @@ class PegasosSVMClassifier(SVMSofiaBase):
 
 
 class SGDSVMClassifier(SVMSofiaBase):
-    @OneVsRest()
     def __init__(self,
                  iterations=100000,
                  dimensionality=2<<16,
@@ -228,7 +221,6 @@ class SGDSVMClassifier(SVMSofiaBase):
 
 
 class PegasosLogisticRegression(LogisticSofiaBase):
-    @OneVsRest()
     def __init__(self,
                  iterations=100000,
                  dimensionality=2<<16,
@@ -246,7 +238,6 @@ class PegasosLogisticRegression(LogisticSofiaBase):
 
 
 class PegasosLMSRegression(LogisticSofiaBase):
-    @OneVsRest()
     def __init__(self,
                  iterations=100000,
                  dimensionality=2<<16,
@@ -264,7 +255,6 @@ class PegasosLMSRegression(LogisticSofiaBase):
 
 
 class LogisticRegression(LogisticSofiaBase):
-    @OneVsRest()
     def __init__(self,
                  iterations=100000,
                  dimensionality=2<<16,
