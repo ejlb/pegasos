@@ -4,14 +4,14 @@ import numpy as np
 import sofia
 
 from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import LabelEncoder
+from sklearn.multiclass import OneVsRestClassifier
 from sklearn.utils import atleast2d_or_csr
 
-# multi-label classification
-    # use composition in base
-
 # deal with sparsity (like svm-light -- sparse matrix)
+
+# predict with custom support-vectors (not fit/load from disk)
+
 # bias term/intercept
 # load/save
 
@@ -35,9 +35,9 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
 
     @abstractmethod
     def __init__(self,
-                 iterations=100000,
-                 dimensionality=2<<16,
-                 lreg=0.1,
+                 iterations,
+                 dimensionality,
+                 lreg,
                  eta_type=ETA_PEGASOS,
                  learner_type=sofia.sofia_ml.PEGASOS,
                  loop_type=LOOP_BALANCED_STOCHASTIC):
@@ -88,21 +88,16 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
         self.support_vectors = sofia.TrainModel(sofia_dataset, self.sofia_config)
         return self
 
-    def predict(self, X):
-        if not self.support_vectors:
-            raise ValueError('must call `fit` before `predict`')
-
-        sofia_X = self._sofia_dataset(X)
-        self.sofia_config.prediction_type = PREDICTION_LINEAR
-        predictions = sofia.sofia_ml.SvmPredictionsOnTestSet(sofia_X, self.support_vectors)
-
-        return map(lambda x: 1 if x > 0 else 0, list(predictions))
+    @abstractmethod
+    def decision_function(self, X):
+        raise NotImplemented
 
     @property
     def classes_(self):
         return self._enc.classes_
 
-    def error(self, X, y):
+    @property
+    def sofia_error_(self, X, y):
         sofia_dataset = self._sofia_dataset(X, y)
         return sofia.sofia_ml.SvmObjective(sofia_dataset, self.support_vectors, self.sofia_config)
 
@@ -129,6 +124,17 @@ class SVMSofiaBase(SofiaBase):
                 eta_type,
                 learner_type,
                 loop_type)
+
+    def predict(self, X):
+        return map(lambda x: 1 if x > 0 else 0, list(self.decision_function(X)))
+
+    def decision_function(self, X):
+        if not self.support_vectors:
+            raise ValueError('must call `fit` before `predict` or `decision_function`')
+
+        self.sofia_config.prediction_type = PREDICTION_LINEAR
+        sofia_X = self._sofia_dataset(X)
+        return sofia.sofia_ml.SvmPredictionsOnTestSet(sofia_X, self.support_vectors)
 
 
 class LogisticSofiaBase(SofiaBase):
@@ -157,16 +163,36 @@ class LogisticSofiaBase(SofiaBase):
                 learner_type,
                 loop_type)
 
+    def predict(self, X):
+        return map(lambda x: 1 if x > 0 else 0, list(self.decision_function(X)))
+
+    def decision_function(self, X):
+        if not self.support_vectors:
+            raise ValueError('must call `fit` before `predict` or `decision_function`')
+
+        self.sofia_config.prediction_type = PREDICTION_LINEAR
+        sofia_X = self._sofia_dataset(X)
+        return sofia.sofia_ml.LogisticPredictionsOnTestSet(sofia_X, self.support_vectors)
+
     def predict_proba(self, X):
         if not self.support_vectors:
-            raise ValueError('must call `fit` before `predict`')
+            raise ValueError('must call `fit` before `predict_proba`')
 
-        sofia_X = self._sofia_dataset(X)
         self.sofia_config.prediction_type = PREDICTION_LOGISTIC
-        return sofia.sofia_ml.SvmPredictionsOnTestSet(sofia_X, self.support_vectors)
+        sofia_X = self._sofia_dataset(X)
+        return sofia.sofia_ml.LogisticPredictionsOnTestSet(sofia_X, self.support_vectors)
+
+
+class OneVsRest:
+    """ A decorator for transparently turning binary classifiers into multilabel classifiers """
+    def __call__(self, f):
+        def wrap(init_self, *args, **kwargs):
+            OneVsRestClassifier(f(init_self, *args, **kwargs))
+        return wrap
 
 
 class PegasosSVMClassifier(SVMSofiaBase):
+    @OneVsRest()
     def __init__(self,
                  iterations=10000,
                  dimensionality=2<<16,
@@ -184,8 +210,9 @@ class PegasosSVMClassifier(SVMSofiaBase):
 
 
 class SGDSVMClassifier(SVMSofiaBase):
+    @OneVsRest()
     def __init__(self,
-                 iterations=10000,
+                 iterations=100000,
                  dimensionality=2<<16,
                  lreg=0.1,
                  eta_type=ETA_PEGASOS,
@@ -201,8 +228,9 @@ class SGDSVMClassifier(SVMSofiaBase):
 
 
 class PegasosLogisticRegression(LogisticSofiaBase):
+    @OneVsRest()
     def __init__(self,
-                 iterations=10000,
+                 iterations=100000,
                  dimensionality=2<<16,
                  lreg=0.1,
                  eta_type=ETA_PEGASOS,
@@ -218,8 +246,9 @@ class PegasosLogisticRegression(LogisticSofiaBase):
 
 
 class PegasosLMSRegression(LogisticSofiaBase):
+    @OneVsRest()
     def __init__(self,
-                 iterations=10000,
+                 iterations=100000,
                  dimensionality=2<<16,
                  lreg=0.1,
                  eta_type=ETA_PEGASOS,
@@ -235,8 +264,9 @@ class PegasosLMSRegression(LogisticSofiaBase):
 
 
 class LogisticRegression(LogisticSofiaBase):
+    @OneVsRest()
     def __init__(self,
-                 iterations=10000,
+                 iterations=100000,
                  dimensionality=2<<16,
                  lreg=0.1,
                  eta_type=ETA_PEGASOS,

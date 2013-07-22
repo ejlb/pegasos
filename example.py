@@ -4,9 +4,11 @@ import sofiapy
 from sklearn.datasets import load_digits
 from sklearn.cross_validation import KFold
 from sklearn.grid_search import IterGrid
+from sklearn.svm import LinearSVC
+
 
 if __name__ == '__main__':
-    data = load_digits(2)
+    data = load_digits()
     X = data['data']
     y = data['target']
 
@@ -26,6 +28,7 @@ if __name__ == '__main__':
             test_X, test_y = X[test], y[test]
 
             model = sofiapy.PegasosSVMClassifier(lreg=params['lambda'])
+            #model = LinearSVC()
             model.fit(train_X, train_y)
             cv_runs.append(model.score(test_X, test_y))
 
