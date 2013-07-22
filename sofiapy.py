@@ -59,7 +59,7 @@ class SofiaBase(BaseEstimator, ClassifierMixin):
         sofia_dataset = sofia.SfDataSet(True)
 
         for i, xi in enumerate(X):
-            yi = y[i] if np.all(y) != None else 0.0
+            yi = y[i] if np.all(y) else 0.0
             sparse_vector = sofia.SfSparseVector(list(xi), yi)
             sofia_dataset.AddLabeledVector(sparse_vector, yi)
 

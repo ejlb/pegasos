@@ -37,6 +37,22 @@ has the same defaults as the sofia-ml command line tool:
 
 The sklearn-like bindings do not need to use SofiaConfig directly.
 
+speed
+-----
+On a 50000 x 25 matrix with 2 classes (via sklearn make_classification):
+
+* sofiapy:   0.878 accuracy in   3.20 seconds
+* liblinear: 0.878 accuracy in   7.11 seconds
+* libsvm:    0.887 accuracy in 208.75 seconds
+
+With 4 classes, training takes:
+
+* sofiapy:   0.672 in  12.38 seconds
+* liblinear: 0.678 in  28.83 seconds
+* libsvm:    0.??? in 888.88 seconds
+
+Sofiapy and liblinear perform similarly in terms of accuracy but sofiapy is much quicker and scales better. Libsvm is slighlty more accuracy but orders of magnitiude slower than both sofiapy and liblinear.
+
 todo
 ----
 * predict_proba for SVM classifiers
