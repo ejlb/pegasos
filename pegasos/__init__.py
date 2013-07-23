@@ -1,33 +1,45 @@
-class PegasosSVMClassifier(SVMSofiaBase):
-    def __init__(self,
-                 iterations=100000,
-                 dimensionality=2<<16,
-                 lreg=0.1,
-                 eta_type=ETA_PEGASOS,
-                 loop_type=LOOP_BALANCED_STOCHASTIC):
+## speed tests
+## sparsity
+## train
+## predict
+## save/load
 
-        super(SVMSofiaBase, self).__init__(
+## docs
+## setup.py/egg etc.
+
+from .pegasos import SVMPegasosBase, LogisticPegasosBase
+from . import constants
+
+class PegasosSVMClassifier(SVMPegasosBase):
+    def __init__(self,
+                 iterations=constants.DFLT_ITERATIONS,
+                 dimensionality=constants.DFLT_DIMENSIONALITY,
+                 lambda_reg=constants.DFLT_LAMBDA_REG,
+                 eta_type=constants.ETA_PEGASOS,
+                 loop_type=constants.LOOP_BALANCED_STOCHASTIC):
+
+        super(SVMPegasosBase, self).__init__(
                 iterations,
                 dimensionality,
-                lreg,
+                lambda_reg,
                 eta_type,
-                sofia.sofia_ml.PEGASOS,
+                constants.LEARNER_PEGASOS_SVM,
                 loop_type)
 
-class PegasosLogisticRegression(LogisticSofiaBase):
+
+class PegasosLogisticRegression(LogisticPegasosBase):
     def __init__(self,
-                 iterations=100000,
-                 dimensionality=2<<16,
-                 lreg=0.1,
-                 eta_type=ETA_PEGASOS,
-                 loop_type=LOOP_BALANCED_STOCHASTIC):
+                 iterations=constants.DFLT_ITERATIONS,
+                 dimensionality=constants.DFLT_DIMENSIONALITY,
+                 lambda_reg=constants.DFLT_LAMBDA_REG,
+                 eta_type=constants.ETA_PEGASOS,
+                 loop_type=constants.LOOP_BALANCED_STOCHASTIC):
 
         super(PegasosLogisticRegression, self).__init__(
                 iterations,
                 dimensionality,
-                lreg,
+                lambda_reg,
                 eta_type,
-                sofia.sofia_ml.LOGREG_PEGASOS,
+                constants.LEARNER_PERGASOS_LOGISTIC,
                 loop_type)
-
 
