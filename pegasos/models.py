@@ -27,9 +27,6 @@ class SVMPegasosBase(PegasosBase):
                 learner_type,
                 loop_type)
 
-    def _fit(self, X, y):
-        raise NotImplemented
-
     def decision_function(self, X):
         if not self.weights:
             raise ValueError('must call `fit` before `predict` or `decision_function`')
@@ -59,9 +56,6 @@ class LogisticPegasosBase(PegasosBase):
                 eta_type,
                 learner_type,
                 loop_type)
-
-    def _fit(self, X, y):
-        raise NotImplemented
 
     def decision_function(self, X):
         if not self.support_vectors:

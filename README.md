@@ -2,7 +2,11 @@ pegasos
 =======
 `pegasos` is a python package for fitting SVM and logistic models via the pegasos solver. The package has an sklearn-like interface so can easily be used with existing sklearn functionality. The pegasos solver alternative between stochastic gradient descent and project steps. The number of training algorithm steps scales linearly with the regularization parameter lambda so the models are well suited to large datasets.
 
-For details on the training algorithm see: http://eprints.pascal-network.org/archive/00004062/01/ShalevSiSr07.pdf. This implementation is based on the google tool `sofia-ml`
+For details on the training algorithm see: 
+
+http://eprints.pascal-network.org/archive/00004062/01/ShalevSiSr07.pdf. 
+
+This implementation is based on the google tool `sofia-ml`
 
 algorithm support
 ------------------

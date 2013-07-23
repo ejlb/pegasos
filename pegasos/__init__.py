@@ -7,7 +7,7 @@
 ## docs
 ## setup.py/egg etc.
 
-from .pegasos import SVMPegasosBase, LogisticPegasosBase
+from .models import SVMPegasosBase, LogisticPegasosBase
 from . import constants
 
 class PegasosSVMClassifier(SVMPegasosBase):

@@ -4,6 +4,9 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import atleast2d_or_csr
 
+from . import pegasos, constants
+from .weight_vector import WeightVector
+
 import numpy as np
 
 class PegasosBase(BaseEstimator, ClassifierMixin):
@@ -18,14 +21,14 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
                  learner_type,
                  loop_type):
 
-        self.weights = None
-
         self.iterations = iterations
         self.dimensionality = dimensionality
         self.lreg = lreg
         self.eta_type = eta_type
         self.loop_type = loop_type
         self.learner_type = learner_type
+
+        self.weight_vector = WeightVector(self.dimensionality)
 
     def fit(self, X, y):
         self._enc = LabelEncoder()
@@ -45,12 +48,14 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
                              "X has %s samples, but y has %s." %
                              (X.shape[0], y.shape[0]))
 
-        self.weights = self._fit(X, y)
-        return self
+        if self.loop_type == constants.LOOP_BALANCED_STOCHASTIC:
+            pegasos.train_stochastic_balanced(self, X, y)
+        elif self.loop_type == constants.LOOP_STOCHASTIC:
+            pegasos.train_stochastic(self, X, y)
+        else:
+            raise ValueError('%s: unknown loop type' % self.loop_type)
 
-    @abstractmethod
-    def _fit(self, X, y):
-        raise NotImplemented
+        return self
 
     @abstractmethod
     def decision_function(self, X):
