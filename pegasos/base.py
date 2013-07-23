@@ -16,19 +16,19 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
     def __init__(self,
                  iterations,
                  dimensionality,
-                 lreg,
+                 lambda_reg,
                  eta_type,
                  learner_type,
                  loop_type):
 
         self.iterations = iterations
         self.dimensionality = dimensionality
-        self.lreg = lreg
+        self.lambda_reg = lambda_reg
         self.eta_type = eta_type
         self.loop_type = loop_type
         self.learner_type = learner_type
 
-        self.weight_vector = WeightVector(self.dimensionality)
+        self.weight_vector = None
 
     def fit(self, X, y):
         self._enc = LabelEncoder()
@@ -48,6 +48,8 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
                              "X has %s samples, but y has %s." %
                              (X.shape[0], y.shape[0]))
 
+        self.weight_vector = WeightVector(X.shape[1])
+
         if self.loop_type == constants.LOOP_BALANCED_STOCHASTIC:
             pegasos.train_stochastic_balanced(self, X, y)
         elif self.loop_type == constants.LOOP_STOCHASTIC:
@@ -62,7 +64,10 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
         raise NotImplemented
 
     def predict(self, X):
-        return map(lambda x: 1 if x > 0 else 0, self.decision_function(X))
+        d = self.decision_function(X)
+        d[d>0] = 1
+        d[d<=0] = 0
+        return d
 
     @property
     def classes_(self):

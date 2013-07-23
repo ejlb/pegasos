@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 
 from .base import PegasosBase
 from . import constants
+from . import pegasos
 
 
 class SVMPegasosBase(PegasosBase):
@@ -11,7 +12,7 @@ class SVMPegasosBase(PegasosBase):
     def __init__(self,
                  iterations,
                  dimensionality,
-                 lreg,
+                 lambda_reg,
                  eta_type,
                  learner_type,
                  loop_type):
@@ -22,17 +23,16 @@ class SVMPegasosBase(PegasosBase):
         super(SVMPegasosBase, self).__init__(
                 iterations,
                 dimensionality,
-                lreg,
+                lambda_reg,
                 eta_type,
                 learner_type,
                 loop_type)
 
     def decision_function(self, X):
-        if not self.weights:
+        if not self.weight_vector:
             raise ValueError('must call `fit` before `predict` or `decision_function`')
 
-        ## linear prediction
-
+        return pegasos.predict_svm(self, X)
 
 class LogisticPegasosBase(PegasosBase):
     __metaclass__ = ABCMeta
@@ -41,7 +41,7 @@ class LogisticPegasosBase(PegasosBase):
     def __init__(self,
                  iterations,
                  dimensionality,
-                 lreg,
+                 lambda_reg,
                  eta_type,
                  learner_type,
                  loop_type):
@@ -52,19 +52,19 @@ class LogisticPegasosBase(PegasosBase):
         super(LogisticPegasosBase, self).__init__(
                 iterations,
                 dimensionality,
-                lreg,
+                lambda_reg,
                 eta_type,
                 learner_type,
                 loop_type)
 
     def decision_function(self, X):
-        if not self.support_vectors:
+        if not self.weight_vector:
             raise ValueError('must call `fit` before `predict` or `decision_function`')
 
         # linear predictions
 
     def predict_proba(self, X):
-        if not self.support_vectors:
+        if not self.weight_vector:
             raise ValueError('must call `fit` before `predict_proba`')
 
         # probabalistic predictions
