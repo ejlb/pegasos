@@ -6,7 +6,7 @@ class PegasosSVMClassifier(SVMPegasosBase):
                  iterations=constants.DFLT_ITERATIONS,
                  lambda_reg=constants.DFLT_LAMBDA_REG,
                  eta_type=constants.ETA_PEGASOS,
-                 loop_type=constants.LOOP_BALANCED_STOCHASTIC):
+                 loop_type=constants.LOOP_STOCHASTIC):
 
         super(SVMPegasosBase, self).__init__(
                 iterations,
@@ -21,7 +21,7 @@ class PegasosLogisticRegression(LogisticPegasosBase):
                  iterations=constants.DFLT_ITERATIONS,
                  lambda_reg=constants.DFLT_LAMBDA_REG,
                  eta_type=constants.ETA_PEGASOS,
-                 loop_type=constants.LOOP_BALANCED_STOCHASTIC):
+                 loop_type=constants.LOOP_STOCHASTIC):
 
         super(PegasosLogisticRegression, self).__init__(
                 iterations,
