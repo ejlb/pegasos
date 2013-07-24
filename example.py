@@ -12,11 +12,11 @@ def fit():
 
     warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-    for samples in [10000, 100000, 500000, 1000000, 10000000]:
+    for samples in [1000, 10000, 100000, 500000, 1000000, 10000000]:
 
         models = {
-            'pegasos-svm': OneVsRestClassifier(pegasos.PegasosSVMClassifier(loop_type=pegasos.constants.LOOP_STOCHASTIC)),
-            'pegasos-log': OneVsRestClassifier(pegasos.PegasosLogisticRegression(loop_type=pegasos.constants.LOOP_STOCHASTIC)),
+            'pegasos-svm': OneVsRestClassifier(pegasos.PegasosSVMClassifier()),
+            'pegasos-log': OneVsRestClassifier(pegasos.PegasosLogisticRegression()),
             'liblinear': LinearSVC(),
         }
 
@@ -30,6 +30,9 @@ def fit():
 
             v.fit(train_X, train_y)
             score = v.score(test_X, test_y)
+
+            if k == 'pegasos-log':
+                v.predict_proba(test_X)
 
             end = time.clock()
             print '%s: acc %.5f in %f seconds' % (k, score, end-start)

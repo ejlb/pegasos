@@ -17,7 +17,7 @@ algorithm support
 * loops: stochastic, balanced stochastic
 * predictions: linear, logistic
 
-see example.py for how to use the library
+See example.py for how to use the library. Probabilities are only supported for the logistic learner
 
 API support
 -----------
@@ -48,10 +48,6 @@ requirements
 
 todo
 ----
-* a balanced stochastic training loop
 * sparsity support
 * serialisation
-* docs/test
-
-* predict\_proba for SVM classifiers
-
+* docs/test/setup.py

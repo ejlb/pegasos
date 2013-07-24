@@ -15,14 +15,12 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
     @abstractmethod
     def __init__(self,
                  iterations,
-                 dimensionality,
                  lambda_reg,
                  eta_type,
                  learner_type,
                  loop_type):
 
         self.iterations = iterations
-        self.dimensionality = dimensionality
         self.lambda_reg = lambda_reg
         self.eta_type = eta_type
         self.loop_type = loop_type
