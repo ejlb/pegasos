@@ -59,15 +59,22 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
 
         return self
 
-    @abstractmethod
     def decision_function(self, X):
-        raise NotImplemented
+        if not self.weight_vector:
+            raise ValueError('must call `fit` before `predict` or `decision_function`')
+
+        return pegasos.predict(self, X)
 
     def predict(self, X):
+        if not hasattr(self, '_enc'):
+            raise ValueError('must call `fit` before `predict`')
+
         d = self.decision_function(X)
         d[d>0] = 1
         d[d<=0] = 0
-        return d
+        d = d.astype(np.int32, copy=False)
+
+        return self._enc.inverse_transform(d)
 
     @property
     def classes_(self):

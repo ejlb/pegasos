@@ -1,6 +1,6 @@
 pegasos
 =======
-`pegasos` is a python package for fitting SVM and logistic models via the pegasos solver. The package has an sklearn-like interface so can easily be used with existing sklearn functionality. The pegasos solver alternative between stochastic gradient descent and project steps. The number of training algorithm steps scales linearly with the regularization parameter lambda so the models are well suited to large datasets.
+`pegasos` is a python package for fitting SVM and logistic models via the pegasos solver. The package has an sklearn-like interface so can easily be used with existing sklearn functionality. The pegasos solver alternative between stochastic gradient descent and project steps. The number of training algorithm steps scales linearly with the regularization parameter lambda and the number of iterations; as such the model is well suited to large datasets.
 
 For details on the training algorithm see: 
 
@@ -27,23 +27,22 @@ API support
 
 speed
 -----
-On a 50000 x 25 matrix with 2 classes (via sklearn's `make\_classification`):
-
 ```
-pegasos:   0.878 accuracy in   3.20 seconds
-liblinear: 0.878 accuracy in   7.11 seconds
-libsvm:    0.887 accuracy in 208.75 seconds
-```
-
-With 4 classes, training takes:
-
-```
-pegasos:   0.672 in  12.38 seconds
-liblinear: 0.678 in  28.83 seconds
-libsvm:    0.720 in 540.55 seconds
+samples   pegasos  liblinear  libsvm
+------------------------------------
+10^4      4.08     0.55       10.42
+10^5      4.09     17.35      2638.62
+10^6      4.63     230.71     *
+10^7      6.87     3318.32    *
 ```
 
-Pegasos and liblinear perform similarly in terms of accuracy but pegasos is much quicker and scales better. Libsvm is slighlty more accuracy but orders of magnitiude slower than both pegasos and liblinear.
+\* libsvm times are missing because the models converge sometime around the heat-death of the universe
+
+The constant training time of pegasos is due to keeping a constant number of iterations. For larger datasets the number of iterations should be increased. A grid-search on the lambda regularization parameter may also be benifical. The accuracy of the classifiers is generally `libsvm` > `liblinear` > `pegasos` but the differences are only 0.5-1%
+
+requirements
+------------
+* scikit-learn >= 0.13.1
 
 todo
 ----

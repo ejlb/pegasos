@@ -42,6 +42,6 @@ class PegasosLogisticRegression(LogisticPegasosBase):
                 dimensionality,
                 lambda_reg,
                 eta_type,
-                constants.LEARNER_PERGASOS_LOGISTIC,
+                constants.LEARNER_PEGASOS_LOGREG,
                 loop_type)
 
