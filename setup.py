@@ -12,7 +12,8 @@ config = {
     'install_requires': ['nose'],
     'packages': ['pegasos'],
     'scripts': [],
-    'name': 'pegasos'
+    'name': 'pegasos',
+    'install_requires': 'scikit-learn>=0.13',
 }
 
 setup(**config)
