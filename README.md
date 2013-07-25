@@ -55,6 +55,6 @@ python setup.py nosetests
 
 todo
 ----
+* bias term
 * sparsity support
-* serialisation
 * docs
