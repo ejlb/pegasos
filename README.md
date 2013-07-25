@@ -22,10 +22,10 @@ See example.py for how to use the library. Probabilities are only supported for 
 API support
 -----------
 * sparse or dense matrix support
-* binary and multiclass model training
+* binary classes (multiclass via sklearn.multiclass)
 * balanced class weightings
 * predictions (probabilistic predictions for logistic)
-* model serialisation
+* model serialisation via cPickle
 
 speed
 -----
@@ -42,12 +42,19 @@ samples   pegasos  liblinear  libsvm
 
 The constant training time of pegasos is due to keeping a constant number of iterations. For larger datasets the number of iterations should be increased. A grid-search on the lambda regularization parameter may also be benifical. The accuracy of the classifiers is generally `libsvm` > `liblinear` > `pegasos` but the differences are only 0.5-1%
 
-requirements
-------------
+build
+------
+```
+python setup.py build
+python setup.py install
+python setup.py nosetests
+```
+
 * scikit-learn >= 0.13.1
+* compatible numpy/scipy for sklearn
 
 todo
 ----
 * sparsity support
 * serialisation
-* docs/test/setup.py
+* docs
