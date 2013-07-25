@@ -1,5 +1,7 @@
-""" Functions for fitting and predicting pegasos models. Heavily
-    'inspired' by google's C++ sofia-ml implementation """
+"""
+Functions for fitting and predicting. Heavily inspired
+by google's C++ sofia-ml implementation.
+"""
 
 import random
 import math
@@ -11,16 +13,9 @@ def L2_regularize(w, eta, lambda_reg):
     scaling_factor = 1.0 - (eta * lambda_reg)
     w.scale_to(max(scaling_factor, constants.MIN_SCALING_FACTOR))
 
-def etaval(eta_type, lambda_reg, iteration):
-    """ return learning rate for current training iteration based on model.eta_type """
-    if eta_type == constants.ETA_CONSTANT:
-        return 0.02
-    elif eta_type == constants.ETA_BASIC:
-        return 10.0 / (iteration + 10.0)
-    elif eta_type == constants.ETA_PEGASOS:
-        return 1.0 / (lambda_reg * iteration)
-    else:
-        raise ValueError('%s: unknown eta type' % eta_type)
+def etaval(lambda_reg, iteration):
+    """ Decrease learning rate proportionally to number of iterations """
+    return 1.0 / (lambda_reg * iteration)
 
 def pegasos_projection(w, lambda_reg):
     projection = 1.0 / math.sqrt(lambda_reg * w.squared_norm)
@@ -47,7 +42,7 @@ def train_stochastic(model, X, y):
         xi = X[i]
         yi = y[i]
 
-        eta = etaval(model.eta_type, model.lambda_reg, iteration)
+        eta = etaval(model.lambda_reg, iteration)
 
         if model.learner_type == constants.LEARNER_PEGASOS_SVM:
             _single_svm_step(xi, yi, model.weight_vector, eta, model.lambda_reg)
@@ -57,7 +52,12 @@ def train_stochastic(model, X, y):
             raise ValueError('%s: unknown learner type' % model.loop_type)
 
 def train_stochastic_balanced(model, X, y):
-    # get the indices of positive and negative cases
+    """
+    At each training step we sample a negative and positive
+    case which maintains balance between the classes. The
+    sampling is performing in a way that prevents copying.
+    """
+
     pos_idx = np.where(y==1)[0]
     neg_idx = np.where(y==-1)[0]
 
@@ -70,7 +70,7 @@ def train_stochastic_balanced(model, X, y):
         neg_xi = X[neg_i]
         neg_yi = y[neg_i]
 
-        eta = etaval(model.eta_type, model.lambda_reg, iteration)
+        eta = etaval(model.lambda_reg, iteration)
 
         if model.learner_type == constants.LEARNER_PEGASOS_SVM:
             _single_svm_step(pos_xi, pos_yi, model.weight_vector, eta, model.lambda_reg)

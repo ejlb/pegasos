@@ -12,7 +12,6 @@ class SVMPegasosBase(PegasosBase):
     def __init__(self,
                  iterations,
                  lambda_reg,
-                 eta_type,
                  learner_type,
                  loop_type):
 
@@ -22,7 +21,6 @@ class SVMPegasosBase(PegasosBase):
         super(SVMPegasosBase, self).__init__(
                 iterations,
                 lambda_reg,
-                eta_type,
                 learner_type,
                 loop_type)
 
@@ -34,7 +32,6 @@ class LogisticPegasosBase(PegasosBase):
     def __init__(self,
                  iterations,
                  lambda_reg,
-                 eta_type,
                  learner_type,
                  loop_type):
 
@@ -44,7 +41,6 @@ class LogisticPegasosBase(PegasosBase):
         super(LogisticPegasosBase, self).__init__(
                 iterations,
                 lambda_reg,
-                eta_type,
                 learner_type,
                 loop_type)
 
@@ -54,5 +50,8 @@ class LogisticPegasosBase(PegasosBase):
 
         p = self.decision_function(X) * self.weight_vector.scale
         positive = np.exp(p) / (1.0 + np.exp(p))
+
+        # Return positive and negative class probabilities to
+        # satisfy sklearn pipelines such as OneVsRestClassifier.
         return np.vstack((positive, 1 - positive)).T
 

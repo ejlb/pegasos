@@ -2,22 +2,9 @@ This library is a work in progress
 
 pegasos
 =======
-`pegasos` is a python package for fitting SVM and logistic models via the pegasos solver. The package has an sklearn-like interface so can easily be used with existing sklearn functionality. The pegasos solver alternative between stochastic gradient descent and project steps. The number of training algorithm steps scales linearly with the regularization parameter lambda and the number of iterations; as such the model is well suited to large datasets.
+pegasos is a pure-python package for fitting SVM and logistic models using the `Primal Estimated sub-GrAdient SOlver`. This implementation is based on the google tool `sofia-ml`. The package has an sklearn-like interface so can easily be used with existing sklearn functionality. At each training step, the pegasos solver randomly samples a batch from the training data. The runtime of the training algorithm scales linearly with the regularization parameter `lambda` and the number of training steps; as such the model is well suited to large datasets. For details on the training algorithm see: 
 
-For details on the training algorithm see: 
-
-http://eprints.pascal-network.org/archive/00004062/01/ShalevSiSr07.pdf. 
-
-This implementation is based on the google tool `sofia-ml`
-
-algorithm support
-------------------
-* learners: pegasos svm, pegasos logistic
-* eta: basic, pegasos, constant
-* loops: stochastic, balanced stochastic
-* predictions: linear, logistic
-
-See example.py for how to use the library. Probabilities are only supported for the logistic learner
+http://eprints.pascal-network.org/archive/00004062/01/ShalevSiSr07.pdf
 
 API support
 -----------
@@ -26,6 +13,8 @@ API support
 * balanced class weightings
 * predictions (probabilistic predictions for logistic)
 * model serialisation via cPickle
+
+See `example.py` for how to use the library. 
 
 speed
 -----
@@ -40,7 +29,7 @@ samples   pegasos  liblinear  libsvm
 
 \* libsvm times are missing because the models converge sometime around the heat-death of the universe
 
-The constant training time of pegasos is due to keeping a constant number of iterations. For larger datasets the number of iterations should be increased. A grid-search on the lambda regularization parameter may also be benifical. The accuracy of the classifiers is generally `libsvm` > `liblinear` > `pegasos` but the differences are only 0.5-1%
+The near-constant training time of pegasos is due to the constant number of training steps. For larger datasets the number of iterations should be increased. A grid-search on the lambda regularization parameter may also be benifical. The accuracy of the classifiers is generally ordered as `libsvm` > `liblinear` > `pegasos` but the differences are only 0.5-1%
 
 build
 ------
@@ -50,11 +39,15 @@ python setup.py install
 python setup.py nosetests
 ```
 
+Requirements are:
+
 * scikit-learn >= 0.13.1
 * compatible numpy/scipy for sklearn
 
 todo
 ----
-* bias term
 * sparsity support
-* docs
+* bias term
+* training batch
+* tests
+
