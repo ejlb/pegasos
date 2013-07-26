@@ -30,6 +30,11 @@ def _single_svm_step(xi, yi, w, eta, lambda_reg):
     pegasos_projection(w, lambda_reg)
 
 def _single_logreg_step(xi, yi, w, eta, lambda_reg):
+
+    ##################
+    # how to deal with this
+    #
+    print w.inner_product(xi)
     loss = yi / (1 + np.exp(yi * w.inner_product(xi)))
     L2_regularize(w, eta, lambda_reg)
     w.add(xi, (eta * loss))

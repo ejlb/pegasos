@@ -1,8 +1,8 @@
 from abc import ABCMeta, abstractmethod
-
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import atleast2d_or_csr
+from scipy import sparse
 
 from . import pegasos, constants
 from .weight_vector import WeightVector
@@ -27,6 +27,9 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
         self.weight_vector = None
 
     def fit(self, X, y):
+        if sparse.issparse(y):
+            y = np.asarray(y.todense())
+
         self._enc = LabelEncoder()
         y = self._enc.fit_transform(y)
 
@@ -45,7 +48,7 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
                              "X has %s samples, but y has %s." %
                              (X.shape[0], y.shape[0]))
 
-        self.weight_vector = WeightVector(X.shape[1])
+        self.weight_vector = WeightVector(X)
 
         if self.loop_type == constants.LOOP_BALANCED_STOCHASTIC:
             pegasos.train_stochastic_balanced(self, X, y)
