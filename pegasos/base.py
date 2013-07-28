@@ -75,6 +75,7 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
 
         # convert to int for the LabelEncoder
         d = d.astype(np.int32, copy=False)
+
         return self._enc.inverse_transform(d)
 
     @property

@@ -30,26 +30,23 @@ class WeightVector(object):
                              'to a large value eta * lambda')
 
     def add(self, xi, scaler):
-        xi_scaled = xi * scaler
-
         if sparse.issparse(xi):
-            self.weights * xi_scaled
+            xi_scaled = sparse.csr_matrix(xi.T * scaler)
+            inner = (self.weights * xi_scaled).sum()
         else:
+            xi_scaled = xi * scaler
             inner = np.inner(self.weights, xi_scaled)
 
-        self.weights += (xi_scaled / self.scale)
+        self.weights = self.weights + (xi_scaled / self.scale).T
 
-        xi_inner = (xi*xi).sum()
+        xi_inner = (xi*xi.T).sum()
         self.squared_norm += xi_inner \
                           *  math.pow(scaler, 2) \
                           +  (2.0 * self.scale * inner)
 
     def inner_product(self, x):
         if sparse.issparse(x):
-            print 'w',self.weights.T
-            print 'x',x
-            print 's',self.scale
-            return self.weights.T*x*self.scale
+            return self.weights*x.T*self.scale
         else:
             return np.inner(self.weights, x)*self.scale
 

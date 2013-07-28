@@ -13,7 +13,11 @@ config = {
     'packages': ['pegasos'],
     'scripts': [],
     'name': 'pegasos',
-    'install_requires': 'scikit-learn>=0.13',
+    'install_requires': [
+        'scikit-learn>=0.13',
+        'numpy>=1.7.1',
+        'scipy>=0.10.1',
+    ]
 }
 
 setup(**config)

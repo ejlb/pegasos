@@ -18,8 +18,9 @@ def fit():
     datasets = train_test_split(X, y, random_state=state)
     sparse_datasets = map(csr_matrix, datasets)
     train_X, test_X, train_y, test_y = sparse_datasets
+    test_y = test_y.todense()
 
-    model = pegasos.PegasosLogisticRegression()
+    model = pegasos.PegasosSVMClassifier()
     start = time.clock()
     model.fit(train_X, train_y)
     score = model.score(test_X, test_y)

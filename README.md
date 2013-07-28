@@ -33,21 +33,21 @@ The near-constant training time of pegasos is due to the constant number of trai
 
 build
 ------
-```
-python setup.py build
-python setup.py install
-python setup.py nosetests
-```
-
 Requirements are:
 
 * scikit-learn >= 0.13.1
-* compatible numpy/scipy for sklearn
+* numpy >= 1.7.1
+* scipy >= 0.10.1
+
+and nose for tests:
+
+```
+python setup.py nosetests
+```
 
 todo
 ----
 * sparsity support
-* bias term
-* training batch
+* training batches (with online learning)
 * tests
 
