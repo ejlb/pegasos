@@ -4,6 +4,7 @@ import math
 from scipy import sparse
 
 from . import constants
+from . import utils
 
 class WeightVector(object):
     def __init__(self, X):
@@ -30,24 +31,15 @@ class WeightVector(object):
                              'to a large value eta * lambda')
 
     def add(self, xi, scaler):
-        if sparse.issparse(xi):
-            xi_scaled = sparse.csr_matrix(xi.T * scaler)
-            inner = (self.weights * xi_scaled)[0,0]
-            xi_inner = (xi*xi.T)[0,0]
-        else:
-            xi_scaled = xi * scaler
-            inner = np.inner(self.weights, xi_scaled)
-            xi_inner = np.inner(xi, xi.T)
+        xi_scaled = xi * scaler
+        self.weights = self.weights + (xi_scaled / self.scale)
 
-        self.weights = self.weights + (xi_scaled / self.scale).T
+        inner = utils.inner(self.weights, xi_scaled)
 
-        self.squared_norm += xi_inner \
+        self.squared_norm += utils.inner(xi, xi) \
                           *  math.pow(scaler, 2) \
                           +  (2.0 * self.scale * inner)
 
     def inner_product(self, x):
-        if sparse.issparse(x):
-            return (self.weights*x.T)[0,0]*self.scale
-        else:
-            return np.inner(self.weights, x)*self.scale
+        return utils.inner(self.weights, x)*self.scale
 
