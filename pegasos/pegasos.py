@@ -85,7 +85,7 @@ def train_stochastic_balanced(model, X, y):
 
 def predict(model, X):
     if sparse.issparse(X):
-        return (model.weight_vector.weights*X.T).todense()
+        return np.array((model.weight_vector.weights * X.T).todense()).reshape(-1)
     else:
         return np.dot(model.weight_vector.weights, X.T)
 

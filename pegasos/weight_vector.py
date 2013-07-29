@@ -33,7 +33,6 @@ class WeightVector(object):
     def add(self, xi, scaler):
         xi_scaled = xi * scaler
         self.weights = self.weights + (xi_scaled / self.scale)
-
         inner = utils.inner(self.weights, xi_scaled)
 
         self.squared_norm += utils.inner(xi, xi) \

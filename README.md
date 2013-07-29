@@ -31,6 +31,8 @@ samples   pegasos  liblinear  libsvm
 
 The near-constant training time of pegasos is due to the constant number of training steps. For larger datasets the number of iterations should be increased. A grid-search on the lambda regularization parameter may also be benifical. The accuracy of the classifiers is generally ordered as `libsvm` > `liblinear` > `pegasos` but the differences are only 0.5-1%
 
+Note that training time will increase by a constant amount for sparse matrices
+
 build
 ------
 Requirements are:
