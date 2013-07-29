@@ -32,21 +32,22 @@ class WeightVector(object):
     def add(self, xi, scaler):
         if sparse.issparse(xi):
             xi_scaled = sparse.csr_matrix(xi.T * scaler)
-            inner = (self.weights * xi_scaled).sum()
+            inner = (self.weights * xi_scaled)[0,0]
+            xi_inner = (xi*xi.T)[0,0]
         else:
             xi_scaled = xi * scaler
             inner = np.inner(self.weights, xi_scaled)
+            xi_inner = np.inner(xi, xi.T)
 
         self.weights = self.weights + (xi_scaled / self.scale).T
 
-        xi_inner = (xi*xi.T).sum()
         self.squared_norm += xi_inner \
                           *  math.pow(scaler, 2) \
                           +  (2.0 * self.scale * inner)
 
     def inner_product(self, x):
         if sparse.issparse(x):
-            return self.weights*x.T*self.scale
+            return (self.weights*x.T)[0,0]*self.scale
         else:
             return np.inner(self.weights, x)*self.scale
 

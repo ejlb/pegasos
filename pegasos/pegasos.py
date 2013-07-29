@@ -25,24 +25,14 @@ def pegasos_projection(w, lambda_reg):
         w.scale_to(projection)
 
 def _single_svm_step(xi, yi, w, eta, lambda_reg):
-    if sparse.issparse(xi):
-        p = yi * w.inner_product(xi).todense()
-    else:
-        p = yi * w.inner_product(xi)
-
+    p = yi * w.inner_product(xi)
     L2_regularize(w, eta, lambda_reg)
-
     if p < 1.0 and yi != 0.0:
         w.add(xi, (eta * yi))
-
     pegasos_projection(w, lambda_reg)
 
 def _single_logreg_step(xi, yi, w, eta, lambda_reg):
-    if sparse.issparse(xi):
-        loss = yi / (1 + np.exp(yi * w.inner_product(xi).todense()))
-    else:
-        loss = yi / (1 + np.exp(yi * w.inner_product(xi)))
-
+    loss = yi / (1 + np.exp(yi * w.inner_product(xi)))
     L2_regularize(w, eta, lambda_reg)
     w.add(xi, (eta * loss))
     pegasos_projection(w, lambda_reg)
