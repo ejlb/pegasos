@@ -49,7 +49,6 @@ python setup.py nosetests
 
 todo
 ----
-* sparsity support
+* more tests
 * training batches (with online learning)
-* tests
 
