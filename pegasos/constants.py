@@ -25,8 +25,9 @@ LEARNER_PEGASOS_SVM = 1
 LEARNER_PEGASOS_LOGREG = 2
 
 # defaults for hyperparameters
-DFLT_ITERATIONS = 100000
+DFLT_ITERATIONS = 10000
 DFLT_LAMBDA_REG = 0.1
+DFLT_BATCH_SIZE = DFLT_ITERATIONS/100
 
 # make sure we protect against lambda * eta > 1.0 which
 # causes numerical issues for regularization and projection

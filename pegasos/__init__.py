@@ -22,24 +22,28 @@ class PegasosSVMClassifier(SVMPegasosBase):
     def __init__(self,
                  iterations=constants.DFLT_ITERATIONS,
                  lambda_reg=constants.DFLT_LAMBDA_REG,
-                 loop_type=constants.LOOP_STOCHASTIC):
+                 loop_type=constants.LOOP_STOCHASTIC,
+                 batch_size=constants.DFLT_BATCH_SIZE):
 
         super(SVMPegasosBase, self).__init__(
                 iterations,
                 lambda_reg,
                 constants.LEARNER_PEGASOS_SVM,
-                loop_type)
+                loop_type,
+                batch_size)
 
 
 class PegasosLogisticRegression(LogisticPegasosBase):
     def __init__(self,
                  iterations=constants.DFLT_ITERATIONS,
                  lambda_reg=constants.DFLT_LAMBDA_REG,
-                 loop_type=constants.LOOP_STOCHASTIC):
+                 loop_type=constants.LOOP_STOCHASTIC,
+                 batch_size=constants.DFLT_BATCH_SIZE):
 
         super(PegasosLogisticRegression, self).__init__(
                 iterations,
                 lambda_reg,
                 constants.LEARNER_PEGASOS_LOGREG,
-                loop_type)
+                loop_type,
+                batch_size)
 

@@ -30,7 +30,8 @@ class SVMPegasosBase(PegasosBase):
                  iterations,
                  lambda_reg,
                  learner_type,
-                 loop_type):
+                 loop_type,
+                 batch_size):
 
         if learner_type != constants.LEARNER_PEGASOS_SVM:
             raise ValueError('%s only supports SVM learners' % self.__class__.__name__)
@@ -39,7 +40,8 @@ class SVMPegasosBase(PegasosBase):
                 iterations,
                 lambda_reg,
                 learner_type,
-                loop_type)
+                loop_type,
+                batch_size)
 
 
 class LogisticPegasosBase(PegasosBase):
@@ -50,7 +52,8 @@ class LogisticPegasosBase(PegasosBase):
                  iterations,
                  lambda_reg,
                  learner_type,
-                 loop_type):
+                 loop_type,
+                 batch_size):
 
         if learner_type != constants.LEARNER_PEGASOS_LOGREG:
             raise ValueError('%s only supports logistic learners' % self.__class__.__name__)
@@ -59,7 +62,8 @@ class LogisticPegasosBase(PegasosBase):
                 iterations,
                 lambda_reg,
                 learner_type,
-                loop_type)
+                loop_type,
+                batch_size)
 
     def predict_proba(self, X):
         if not self.weight_vector:

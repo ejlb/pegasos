@@ -47,6 +47,7 @@ python setup.py nosetests
 
 todo
 ----
-* more tests
+* benchmark pdf
 * training batches (with online learning)
+* more tests
 

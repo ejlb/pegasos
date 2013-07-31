@@ -34,12 +34,14 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
                  iterations,
                  lambda_reg,
                  learner_type,
-                 loop_type):
+                 loop_type,
+                 batch_size):
 
         self.iterations = iterations
         self.lambda_reg = lambda_reg
         self.loop_type = loop_type
         self.learner_type = learner_type
+        self.batch_size = batch_size
 
         self.weight_vector = None
 

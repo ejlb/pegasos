@@ -40,11 +40,14 @@ def pegasos_projection(w, lambda_reg):
     if projection < 1.0:
         w.scale_to(projection)
 
-def _single_svm_step(xi, yi, w, eta, lambda_reg):
-    p = yi * w.inner_product(xi)
+def _single_svm_step(x, y, w, eta, lambda_reg):
+    #####################################
+    ###### make this support batch ######
+    #####################################
+    p = y * w.inner_product(x)
     L2_regularize(w, eta, lambda_reg)
-    if p < 1.0 and yi != 0.0:
-        w.add(xi, (eta * yi))
+    if p < 1.0 and y != 0.0:
+        w.add(x, (eta * y))
     pegasos_projection(w, lambda_reg)
 
 def _single_logreg_step(xi, yi, w, eta, lambda_reg):
@@ -55,7 +58,7 @@ def _single_logreg_step(xi, yi, w, eta, lambda_reg):
 
 def train_stochastic(model, X, y):
     for iteration in range(1, model.iterations):
-        i = random.randint(0, X.shape[0]-1)
+        i = np.random.choice(range(X.shape[0]), size=model.batch_size)
 
         xi = X[i]
         yi = y[i]
@@ -80,8 +83,8 @@ def train_stochastic_balanced(model, X, y):
     neg_idx = np.where(y==-1)[0]
 
     for iteration in range(1, model.iterations):
-        pos_i = np.random.choice(pos_idx)
-        neg_i = np.random.choice(neg_idx)
+        pos_i = np.random.choice(pos_idx, size=model.n_batch)
+        neg_i = np.random.choice(neg_idx, size=model.n_batch)
 
         pos_xi = X[pos_i]
         pos_yi = y[pos_i]
