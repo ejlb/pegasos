@@ -6,8 +6,8 @@ from sklearn.datasets import make_classification
 from sklearn.linear_model import SGDClassifier
 
 def fit():
-    for samples in [1000, 10000, 100000, 1000000, 10000000]:
-        for sample_coef in [5,10,25,50]:
+    for samples in [1000, 10000, 100000, 1000000]:
+        for sample_coef in [1,5,10,25]:
             models = {
                 'sgd': SGDClassifier(power_t=1, learning_rate='invscaling', n_iter=sample_coef, eta0=0.01),
                 'peg': pegasos.PegasosSVMClassifier(iterations=samples*sample_coef),
