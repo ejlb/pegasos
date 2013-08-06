@@ -16,6 +16,8 @@ See `example.py` for how to use the library.
 
 speed
 -----
+There are benchmarks against sklearn's SGDClassifier in the benchmarks folder.
+
 ```
 samples   pegasos  liblinear  libsvm
 ------------------------------------
