@@ -31,6 +31,7 @@ class SVMPegasosBase(PegasosBase):
                  lambda_reg,
                  learner_type,
                  loop_type,
+                 verbose,
                  batch_size):
 
         if learner_type != constants.LEARNER_PEGASOS_SVM:
@@ -41,8 +42,8 @@ class SVMPegasosBase(PegasosBase):
                 lambda_reg,
                 learner_type,
                 loop_type,
+                verbose,
                 batch_size)
-
 
 class LogisticPegasosBase(PegasosBase):
     __metaclass__ = ABCMeta
@@ -53,6 +54,7 @@ class LogisticPegasosBase(PegasosBase):
                  lambda_reg,
                  learner_type,
                  loop_type,
+                 verbose,
                  batch_size):
 
         if learner_type != constants.LEARNER_PEGASOS_LOGREG:
@@ -63,6 +65,7 @@ class LogisticPegasosBase(PegasosBase):
                 lambda_reg,
                 learner_type,
                 loop_type,
+                verbose,
                 batch_size)
 
     def predict_proba(self, X):

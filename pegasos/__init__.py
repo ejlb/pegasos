@@ -18,11 +18,13 @@
 from .models import SVMPegasosBase, LogisticPegasosBase
 from . import constants
 
+
 class PegasosSVMClassifier(SVMPegasosBase):
     def __init__(self,
                  iterations=constants.DFLT_ITERATIONS,
                  lambda_reg=constants.DFLT_LAMBDA_REG,
                  loop_type=constants.LOOP_STOCHASTIC,
+                 verbose=0,
                  batch_size=constants.DFLT_BATCH_SIZE):
 
         super(SVMPegasosBase, self).__init__(
@@ -30,6 +32,7 @@ class PegasosSVMClassifier(SVMPegasosBase):
                 lambda_reg,
                 constants.LEARNER_PEGASOS_SVM,
                 loop_type,
+                verbose,
                 batch_size)
 
 
@@ -38,6 +41,7 @@ class PegasosLogisticRegression(LogisticPegasosBase):
                  iterations=constants.DFLT_ITERATIONS,
                  lambda_reg=constants.DFLT_LAMBDA_REG,
                  loop_type=constants.LOOP_STOCHASTIC,
+                 verbose=0,
                  batch_size=constants.DFLT_BATCH_SIZE):
 
         super(PegasosLogisticRegression, self).__init__(
@@ -45,5 +49,6 @@ class PegasosLogisticRegression(LogisticPegasosBase):
                 lambda_reg,
                 constants.LEARNER_PEGASOS_LOGREG,
                 loop_type,
+                verbose,
                 batch_size)
 

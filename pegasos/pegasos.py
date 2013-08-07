@@ -72,6 +72,9 @@ def train_stochastic(model, X, y):
         else:
             raise ValueError('%s: unknown learner type' % model.loop_type)
 
+        if model.verbose > 1 or (model.verbose == 1 and iteration % 1000 == 0):
+            print 'train_stochastic: i=%d' % iteration
+
 def train_stochastic_balanced(model, X, y):
     """
     At each training step we sample a negative and positive
@@ -101,6 +104,9 @@ def train_stochastic_balanced(model, X, y):
             _single_logreg_step(neg_xi, neg_yi, model.weight_vector, eta, model.lambda_reg)
         else:
             raise ValueError('%s: unknown learner type' % model.loop_type)
+
+        if model.verbose > 1 or (model.verbose == 1 and iteration % 1000 == 0):
+            print 'train_stochastic_balanced: i=%d' % iteration
 
 def predict(model, X):
     if sparse.issparse(X):
