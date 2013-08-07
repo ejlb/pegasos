@@ -15,8 +15,8 @@
 """
 
 
-import numpy as np
 import math
+import numpy as np
 
 from scipy import sparse
 
@@ -47,14 +47,16 @@ class WeightVector(object):
             raise ValueError('Scaling factor error, likely due'
                              'to a large value eta * lambda')
 
-    def add(self, xi, scaler):
-        xi_scaled = xi * scaler
-        self.weights = self.weights + (xi_scaled / self.scale)
-        inner = utils.inner(self.weights, xi_scaled)
+    def add(self, x, scaler):
+        x_scaled = (x.T * scaler).T
+        self.weights = self.weights + (x_scaled / self.scale)
+        inner = utils.inner(self.weights, x_scaled)
 
-        self.squared_norm += utils.inner(xi, xi) \
-                          *  math.pow(scaler, 2) \
-                          +  (2.0 * self.scale * inner)
+        a = utils.inner(x, x)
+        b = np.power(scaler, 2)
+        c = 2.0 * scaler * inner
+
+        self.squared_norm += a * b + c
 
     def inner_product(self, x):
         return utils.inner(self.weights, x)*self.scale

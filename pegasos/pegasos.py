@@ -19,8 +19,6 @@
 # sofia-ml implementation.
 
 
-import random
-import math
 import numpy as np
 
 from scipy import sparse
@@ -36,18 +34,15 @@ def etaval(lambda_reg, iteration):
     return 1.0 / (lambda_reg * iteration)
 
 def pegasos_projection(w, lambda_reg):
-    projection = 1.0 / math.sqrt(lambda_reg * w.squared_norm)
-    if projection < 1.0:
-        w.scale_to(projection)
+    projection = 1.0 / np.sqrt(lambda_reg * w.squared_norm)
+    for scaler in projection[projection < 1.0]:
+        w.scale_to(scaler)
 
 def _single_svm_step(x, y, w, eta, lambda_reg):
-    #####################################
-    ###### make this support batch ######
-    #####################################
     p = y * w.inner_product(x)
     L2_regularize(w, eta, lambda_reg)
-    if p < 1.0 and y != 0.0:
-        w.add(x, (eta * y))
+    if np.any(p < 1.0):
+        w.add(x[p<1.0], (eta * y))
     pegasos_projection(w, lambda_reg)
 
 def _single_logreg_step(xi, yi, w, eta, lambda_reg):
