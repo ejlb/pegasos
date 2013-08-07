@@ -25,6 +25,7 @@ from . import pegasos, constants
 from .weight_vector import WeightVector
 
 import numpy as np
+import warnings
 
 class PegasosBase(BaseEstimator, ClassifierMixin):
     __metaclass__ = ABCMeta
@@ -90,8 +91,18 @@ class PegasosBase(BaseEstimator, ClassifierMixin):
         d[d>0] = 1
         d[d<=0] = 0
 
-        # convert to int for the LabelEncoder
-        d = d.astype(np.int32, copy=False)
+        try:
+            np_major, np_minor, np_micro = np.version.version.split('.')[0:3]
+        except:
+            np_major = np_minor = np_micro = 0
+            warnings.warn('failed to get numpy version', Warning)
+
+        if np_major >= 1 and np_minor >= 7 and np_micro >= 1:
+            d = d.astype(np.int32, copy=False)
+        else:
+            warnings.warn('numpy <= 1.7.1 results in less efficient predictions', Warning)
+            d = d.astype(np.int32)
+
         return self._enc.inverse_transform(d)
 
     @property
